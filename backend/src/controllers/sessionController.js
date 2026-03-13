@@ -23,7 +23,7 @@ export async function createSession(req, res) {
     await call.getOrCreate({
       data: {
         created_by_id: clerkId,
-        custom: { problem, difficulty },
+        custom: { problem, difficulty, sessionId: session._id.toString() },
       },
     });
 
@@ -42,7 +42,7 @@ export async function createSession(req, res) {
       host: userId,
       callId,
     });
-    
+
     res.status(201).json({ session });
   } catch (error) {
     console.log("Error in createSession controller:", error.message);
