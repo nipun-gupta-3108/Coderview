@@ -18,6 +18,14 @@ export async function createSession(req, res) {
       .toString(36)
       .substring(7)}`;
 
+    // create session in db
+    const session = await Session.create({
+      problem,
+      difficulty,
+      host: userId,
+      callId,
+    });
+    
     // create stream video call
     const call = streamClient.video.call("default", callId);
     await call.getOrCreate({
@@ -34,14 +42,6 @@ export async function createSession(req, res) {
       members: [clerkId],
     });
     await channel.create();
-
-    // create session in db
-    const session = await Session.create({
-      problem,
-      difficulty,
-      host: userId,
-      callId,
-    });
 
     res.status(201).json({ session });
   } catch (error) {
