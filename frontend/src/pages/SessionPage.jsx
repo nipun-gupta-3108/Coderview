@@ -212,7 +212,8 @@ export default function SessionPage() {
     );
   }
 
-  const isHost = session.host?.clerkId === user?.id || session.host?._id === user?.id;
+  const isHost = session.host?.clerkId === user?.id || session.host === user?.id || String(session.host?._id) === String(user?.id);
+  console.log("[isHost debug]", { hostClerkId: session.host?.clerkId, hostId: session.host?._id, hostRaw: session.host, userId: user?.id, isHost });
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-slate-50">
