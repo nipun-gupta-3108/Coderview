@@ -76,6 +76,7 @@ function DiffBadge({ difficulty }) {
   return <span className={DIFFICULTY_COLORS[difficulty] ?? "badge-easy"}>{difficulty}</span>;
 }
 
+// eslint-disable-next-line no-unused-vars
 function StatCard({ icon: Icon, value, label, color, delay = "" }) {
   return (
     <div className={`card p-5 animate-in${delay}`}>
@@ -126,9 +127,6 @@ export default function DashboardPage() {
   const filteredActive = activeSessions.filter(s =>
     s.problem.toLowerCase().includes(search.toLowerCase())
   );
-
-  const activeLive = activeSessions.filter(s => !s.participant);
-  const fullSessions = activeSessions.filter(s => s.participant);
 
   return (
     <div className="p-8 max-w-5xl mx-auto">

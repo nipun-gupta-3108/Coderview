@@ -38,6 +38,7 @@ export default function Sidebar() {
         <p className="text-xs font-medium text-slate-600 uppercase tracking-wider px-3 mb-2">
           Navigation
         </p>
+        {/* eslint-disable-next-line no-unused-vars */}
         {NAV.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}

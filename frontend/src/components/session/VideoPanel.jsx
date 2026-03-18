@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   StreamVideo, StreamCall, CallControls,
-  SpeakerLayout, useCallStateHooks
+  SpeakerLayout
 } from "@stream-io/video-react-sdk";
 import { Mic, MicOff, Video, VideoOff, Maximize2, Users, Loader2 } from "lucide-react";
 import { useStreamVideo } from "../../hooks/useStreamVideo";
@@ -11,7 +11,6 @@ function DemoVideoPanel({ session, currentUser }) {
   const [micOn, setMicOn] = useState(true);
   const [camOn, setCamOn] = useState(true);
 
-  const host = session?.host;
   const participant = session?.participant;
   const hasPartner = !!participant;
 

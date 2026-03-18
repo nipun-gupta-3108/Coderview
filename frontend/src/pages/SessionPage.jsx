@@ -109,7 +109,6 @@ export default function SessionPage() {
   const [running, setRunning] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
 
   const { data: session, isLoading } = useQuery({
@@ -132,6 +131,7 @@ export default function SessionPage() {
     if (problem && !code) {
       setCode(problem.starterCode?.javascript ?? "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [problem]);
 
   const handleLanguageChange = (lang) => {
@@ -155,7 +155,7 @@ export default function SessionPage() {
       setOutput({ type: "success", lines: logs });
 
       const looksCorrect = logs.length > 0 && problem?.examples?.every(ex => {
-        const expected = ex.output.replace(/[\[\]]/g, "").split(",")[0]?.trim();
+        const expected = ex.output.replace(/[[\]]/g, "").split(",")[0]?.trim();
         return expected && logs.some(l => l.includes(expected));
       });
 
@@ -176,12 +176,6 @@ export default function SessionPage() {
     navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 2000);
   };
 
   const handleEnd = () => {

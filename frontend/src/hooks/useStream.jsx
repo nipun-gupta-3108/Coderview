@@ -40,7 +40,7 @@ export function StreamProvider({ children }) {
       setChatClient(null);
       setIsReady(false);
     };
-  }, [isSignedIn, user?.id]);
+  }, [isSignedIn, user]);
 
   return (
     <StreamContext.Provider value={{ chatClient, isReady }}>
@@ -49,4 +49,5 @@ export function StreamProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useStream = () => useContext(StreamContext);

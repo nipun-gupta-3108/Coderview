@@ -200,7 +200,7 @@ export default function ProblemDetailPage() {
         setOutput({ type: "success", lines: logs });
         const hasOutput = logs.length > 0;
         const looksCorrect = hasOutput && problem.examples.every(ex => {
-          const expected = ex.output.replace(/[\[\]]/g, "").split(",")[0]?.trim();
+          const expected = ex.output.replace(/[[\]]/g, "").split(",")[0]?.trim();
           return expected && logs.some(l => l.includes(expected));
         });
         if (looksCorrect) {

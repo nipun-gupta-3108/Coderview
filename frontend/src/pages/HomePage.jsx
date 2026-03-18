@@ -230,6 +230,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
+            {/* eslint-disable-next-line no-unused-vars */}
             {FEATURES.map(({ icon: Icon, title, desc, color }) => (
               <div key={title} className="card p-6 hover:shadow-md transition-shadow group">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${color}`}>
