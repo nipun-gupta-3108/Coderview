@@ -96,36 +96,38 @@ function SessionPage() {
   };
 
   return (
-    <div className="h-screen bg-base-100 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-base-100 to-base-200 flex flex-col">
       <Navbar />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <PanelGroup direction="horizontal">
           {/* LEFT PANEL - CODE EDITOR & PROBLEM DETAILS */}
           <Panel defaultSize={50} minSize={30}>
             <PanelGroup direction="vertical">
               {/* PROBLEM DSC PANEL */}
               <Panel defaultSize={50} minSize={20}>
-                <div className="h-full overflow-y-auto bg-base-200">
+                <div className="h-full overflow-y-auto scrollbar-smooth bg-gradient-to-br from-base-100 to-base-200">
                   {/* HEADER SECTION */}
-                  <div className="p-6 bg-base-100 border-b border-base-300">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h1 className="text-3xl font-bold text-base-content">
+                  <div className="p-6 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b border-base-300/50 sticky top-0 z-10">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex-1">
+                        <h1 className="text-4xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-2">
                           {session?.problem || "Loading..."}
                         </h1>
                         {problemData?.category && (
-                          <p className="text-base-content/60 mt-1">{problemData.category}</p>
+                          <p className="text-base font-semibold text-base-content/70 mb-2">
+                            {problemData.category}
+                          </p>
                         )}
-                        <p className="text-base-content/60 mt-2">
-                          Host: {session?.host?.name || "Loading..."} •{" "}
-                          {session?.participant ? 2 : 1}/2 participants
+                        <p className="text-sm font-semibold text-base-content/70">
+                          <span className="text-base-content font-bold">Host:</span> {session?.host?.name || "Loading..."} •{" "}
+                          <span className="text-base-content font-bold">{session?.participant ? 2 : 1}/2</span> participants
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-end gap-3">
                         <span
-                          className={`badge badge-lg ${getDifficultyBadgeClass(
+                          className={`badge badge-lg font-bold ${getDifficultyBadgeClass(
                             session?.difficulty
                           )}`}
                         >
@@ -136,7 +138,7 @@ function SessionPage() {
                           <button
                             onClick={handleEndSession}
                             disabled={endSessionMutation.isPending}
-                            className="btn btn-error btn-sm gap-2"
+                            className="btn btn-sm bg-gradient-to-r from-error to-error/70 text-white font-bold border-none shadow-lg hover:shadow-xl gap-2"
                           >
                             {endSessionMutation.isPending ? (
                               <Loader2Icon className="w-4 h-4 animate-spin" />
@@ -147,7 +149,9 @@ function SessionPage() {
                           </button>
                         )}
                         {session?.status === "completed" && (
-                          <span className="badge badge-ghost badge-lg">Completed</span>
+                          <span className="badge badge-lg bg-success/20 text-success font-bold border-success/50">
+                            ✓ Completed
+                          </span>
                         )}
                       </div>
                     </div>
@@ -156,78 +160,93 @@ function SessionPage() {
                   <div className="p-6 space-y-6">
                     {/* problem desc */}
                     {problemData?.description && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Description</h2>
-                        <div className="space-y-3 text-base leading-relaxed">
-                          <p className="text-base-content/90">{problemData.description.text}</p>
-                          {problemData.description.notes?.map((note, idx) => (
-                            <p key={idx} className="text-base-content/90">
-                              {note}
-                            </p>
-                          ))}
+                      <div className="card-premium border-primary/30">
+                        <div className="card-body">
+                          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
+                            Description
+                          </h2>
+                          <div className="space-y-4 text-base leading-relaxed">
+                            <p className="text-base-content/90 font-medium">{problemData.description.text}</p>
+                            {problemData.description.notes?.map((note, idx) => (
+                              <p key={idx} className="text-base-content/90 font-medium">
+                                {note}
+                              </p>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {/* examples section */}
                     {problemData?.examples && problemData.examples.length > 0 && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Examples</h2>
+                      <div className="card-premium border-secondary/30">
+                        <div className="card-body">
+                          <h2 className="text-2xl font-bold bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent mb-6">
+                            Examples
+                          </h2>
 
-                        <div className="space-y-4">
-                          {problemData.examples.map((example, idx) => (
-                            <div key={idx}>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="badge badge-sm">{idx + 1}</span>
-                                <p className="font-semibold text-base-content">Example {idx + 1}</p>
-                              </div>
-                              <div className="bg-base-200 rounded-lg p-4 font-mono text-sm space-y-1.5">
-                                <div className="flex gap-2">
-                                  <span className="text-primary font-bold min-w-[70px]">
-                                    Input:
+                          <div className="space-y-6">
+                            {problemData.examples.map((example, idx) => (
+                              <div
+                                key={idx}
+                                className="bg-base-100/50 rounded-2xl p-5 border border-base-300/40 hover:border-secondary/50 transition-all"
+                              >
+                                <div className="flex items-center gap-3 mb-4">
+                                  <span className="badge badge-md bg-gradient-to-r from-secondary to-accent text-white font-bold">
+                                    {idx + 1}
                                   </span>
-                                  <span>{example.input}</span>
+                                  <p className="font-bold text-lg">Example {idx + 1}</p>
                                 </div>
-                                <div className="flex gap-2">
-                                  <span className="text-secondary font-bold min-w-[70px]">
-                                    Output:
-                                  </span>
-                                  <span>{example.output}</span>
-                                </div>
-                                {example.explanation && (
-                                  <div className="pt-2 border-t border-base-300 mt-2">
-                                    <span className="text-base-content/60 font-sans text-xs">
-                                      <span className="font-semibold">Explanation:</span>{" "}
-                                      {example.explanation}
-                                    </span>
+                                <div className="bg-slate-900 rounded-xl p-5 font-mono text-sm space-y-2 border border-base-300/30">
+                                  <div className="flex gap-3">
+                                    <span className="text-info font-bold min-w-[70px]">Input:</span>
+                                    <span className="text-slate-300">{example.input}</span>
                                   </div>
-                                )}
+                                  <div className="flex gap-3">
+                                    <span className="text-success font-bold min-w-[70px]">Output:</span>
+                                    <span className="text-slate-300">{example.output}</span>
+                                  </div>
+                                  {example.explanation && (
+                                    <div className="pt-3 border-t border-slate-700 mt-2">
+                                      <span className="text-slate-400 font-sans text-xs block">
+                                        <span className="font-semibold text-slate-300">Explanation: </span>
+                                        {example.explanation}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {/* Constraints */}
                     {problemData?.constraints && problemData.constraints.length > 0 && (
-                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
-                        <h2 className="text-xl font-bold mb-4 text-base-content">Constraints</h2>
-                        <ul className="space-y-2 text-base-content/90">
-                          {problemData.constraints.map((constraint, idx) => (
-                            <li key={idx} className="flex gap-2">
-                              <span className="text-primary">•</span>
-                              <code className="text-sm">{constraint}</code>
-                            </li>
-                          ))}
-                        </ul>
+                      <div className="card-premium border-accent/30">
+                        <div className="card-body">
+                          <h2 className="text-2xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent mb-4">
+                            Constraints
+                          </h2>
+                          <ul className="space-y-3">
+                            {problemData.constraints.map((constraint, idx) => (
+                              <li key={idx} className="flex gap-3 items-start">
+                                <span className="text-accent font-bold text-lg mt-0.5">•</span>
+                                <code className="text-sm font-semibold text-base-content/80 bg-base-200/50 px-3 py-1 rounded-lg">
+                                  {constraint}
+                                </code>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
               </Panel>
 
-              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+              <PanelResizeHandle className="h-1 bg-gradient-to-r from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-row-resize shadow-lg" />
 
               <Panel defaultSize={50} minSize={20}>
                 <PanelGroup direction="vertical">
@@ -242,7 +261,7 @@ function SessionPage() {
                     />
                   </Panel>
 
-                  <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+                  <PanelResizeHandle className="h-1 bg-gradient-to-r from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-row-resize shadow-lg" />
 
                   <Panel defaultSize={30} minSize={15}>
                     <OutputPanel output={output} />
@@ -252,27 +271,29 @@ function SessionPage() {
             </PanelGroup>
           </Panel>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+          <PanelResizeHandle className="w-1 bg-gradient-to-b from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-col-resize shadow-lg" />
 
           {/* RIGHT PANEL - VIDEO CALLS & CHAT */}
           <Panel defaultSize={50} minSize={30}>
-            <div className="h-full bg-base-200 p-4 overflow-auto">
+            <div className="h-full bg-gradient-to-br from-base-200 to-base-300 p-4 overflow-auto">
               {isInitializingCall ? (
                 <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <Loader2Icon className="w-12 h-12 mx-auto animate-spin text-primary mb-4" />
-                    <p className="text-lg">Connecting to video call...</p>
+                  <div className="text-center space-y-4">
+                    <Loader2Icon className="w-16 h-16 mx-auto animate-spin text-primary" />
+                    <p className="text-xl font-bold text-base-content">Connecting to video call...</p>
                   </div>
                 </div>
               ) : !streamClient || !call ? (
                 <div className="h-full flex items-center justify-center">
-                  <div className="card bg-base-100 shadow-xl max-w-md">
+                  <div className="card-premium max-w-md">
                     <div className="card-body items-center text-center">
-                      <div className="w-24 h-24 bg-error/10 rounded-full flex items-center justify-center mb-4">
+                      <div className="w-24 h-24 bg-error/10 rounded-2xl flex items-center justify-center mb-4">
                         <PhoneOffIcon className="w-12 h-12 text-error" />
                       </div>
-                      <h2 className="card-title text-2xl">Connection Failed</h2>
-                      <p className="text-base-content/70">Unable to connect to the video call</p>
+                      <h2 className="text-2xl font-black text-base-content">Connection Failed</h2>
+                      <p className="text-base-content/70 font-medium">
+                        Unable to connect to the video call
+                      </p>
                     </div>
                   </div>
                 </div>

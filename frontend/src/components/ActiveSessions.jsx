@@ -12,49 +12,51 @@ import { getDifficultyBadgeClass } from "../lib/utils";
 
 function ActiveSessions({ sessions, isLoading, isUserInSession }) {
   return (
-    <div className="lg:col-span-2 card bg-base-100 border-2 border-primary/20 hover:border-primary/30 h-full">
+    <div className="lg:col-span-2 card-premium border-primary/30 h-full">
       <div className="card-body">
         {/* HEADERS SECTION */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b border-base-300/40">
           {/* TITLE AND ICON */}
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-primary to-secondary rounded-xl">
-              <ZapIcon className="size-5" />
+          <div className="flex items-center gap-4">
+            <div className="icon-box-primary w-12 h-12">
+              <ZapIcon className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-black">Live Sessions</h2>
+            <h2 className="text-3xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Live Sessions
+            </h2>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="size-2 bg-success rounded-full" />
-            <span className="text-sm font-medium text-success">{sessions.length} active</span>
+          <div className="flex items-center gap-3 px-4 py-2 bg-success/10 rounded-xl border border-success/30 w-fit">
+            <div className="w-2.5 h-2.5 bg-success rounded-full animate-pulse" />
+            <span className="text-sm font-bold text-success">{sessions.length} active</span>
           </div>
         </div>
 
         {/* SESSIONS LIST */}
-        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+        <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2 scrollbar-smooth">
           {isLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <LoaderIcon className="size-10 animate-spin text-primary" />
+            <div className="flex items-center justify-center py-24">
+              <LoaderIcon className="w-12 h-12 animate-spin text-primary" />
             </div>
           ) : sessions.length > 0 ? (
             sessions.map((session) => (
               <div
                 key={session._id}
-                className="card bg-base-200 border-2 border-base-300 hover:border-primary/50"
+                className="card-premium-dark border-base-400/30 hover:border-primary/50 hover:bg-gradient-to-br hover:from-base-200 hover:to-base-300 transition-all duration-300"
               >
-                <div className="flex items-center justify-between gap-4 p-5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6">
                   {/* LEFT SIDE */}
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="relative size-14 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                      <Code2Icon className="size-7 text-white" />
-                      <div className="absolute -top-1 -right-1 size-4 bg-success rounded-full border-2 border-base-100" />
+                  <div className="flex items-center gap-5 flex-1 min-w-0">
+                    <div className="relative w-16 h-16 flex-shrink-0 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
+                      <Code2Icon className="w-8 h-8 text-white" />
+                      <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-success rounded-full border-3 border-base-100 animate-pulse" />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
                         <h3 className="font-bold text-lg truncate">{session.problem}</h3>
                         <span
-                          className={`badge badge-sm ${getDifficultyBadgeClass(
+                          className={`badge badge-sm font-bold ${getDifficultyBadgeClass(
                             session.difficulty
                           )}`}
                         >
@@ -63,42 +65,48 @@ function ActiveSessions({ sessions, isLoading, isUserInSession }) {
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm opacity-80">
+                      <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-base-content/70">
                         <div className="flex items-center gap-1.5">
-                          <CrownIcon className="size-4" />
-                          <span className="font-medium">{session.host?.name}</span>
+                          <CrownIcon className="w-4 h-4 text-warning" />
+                          <span>{session.host?.name}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <UsersIcon className="size-4" />
-                          <span className="text-xs">{session.participant ? "2/2" : "1/2"}</span>
+                          <UsersIcon className="w-4 h-4 text-info" />
+                          <span>{session.participant ? "2" : "1"}/2 members</span>
                         </div>
                         {session.participant && !isUserInSession(session) ? (
-                          <span className="badge badge-error badge-sm">FULL</span>
+                          <span className="badge badge-error badge-sm font-bold">FULL</span>
                         ) : (
-                          <span className="badge badge-success badge-sm">OPEN</span>
+                          <span className="badge badge-success badge-sm font-bold">OPEN</span>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {session.participant && !isUserInSession(session) ? (
-                    <button className="btn btn-disabled btn-sm">Full</button>
-                  ) : (
-                    <Link to={`/session/${session._id}`} className="btn btn-primary btn-sm gap-2">
-                      {isUserInSession(session) ? "Rejoin" : "Join"}
-                      <ArrowRightIcon className="size-4" />
-                    </Link>
-                  )}
+                  {/* ACTION BUTTON */}
+                  <div className="w-full sm:w-auto">
+                    {session.participant && !isUserInSession(session) ? (
+                      <button className="btn btn-sm btn-disabled w-full">Full</button>
+                    ) : (
+                      <Link
+                        to={`/session/${session._id}`}
+                        className="btn btn-sm bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-md hover:shadow-lg border-none w-full sm:w-auto"
+                      >
+                        {isUserInSession(session) ? "Rejoin" : "Join"}
+                        <ArrowRightIcon className="w-4 h-4" />
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-16">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl flex items-center justify-center">
-                <SparklesIcon className="w-10 h-10 text-primary/50" />
+            <div className="text-center py-20">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl flex items-center justify-center">
+                <SparklesIcon className="w-12 h-12 text-primary/40" />
               </div>
-              <p className="text-lg font-semibold opacity-70 mb-1">No active sessions</p>
-              <p className="text-sm opacity-50">Be the first to create one!</p>
+              <p className="text-xl font-bold text-base-content/70 mb-2">No active sessions</p>
+              <p className="text-sm text-base-content/50">Be the first to create one!</p>
             </div>
           )}
         </div>

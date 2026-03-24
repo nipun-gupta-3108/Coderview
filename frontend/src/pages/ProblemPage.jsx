@@ -107,10 +107,10 @@ function ProblemPage() {
   };
 
   return (
-    <div className="h-screen bg-base-100 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-base-100 to-base-200 flex flex-col">
       <Navbar />
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <PanelGroup direction="horizontal">
           {/* left panel- problem desc */}
           <Panel defaultSize={40} minSize={30}>
@@ -122,7 +122,7 @@ function ProblemPage() {
             />
           </Panel>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+          <PanelResizeHandle className="w-1 bg-gradient-to-b from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-col-resize shadow-lg" />
 
           {/* right panel- code editor & output */}
           <Panel defaultSize={60} minSize={30}>
@@ -139,10 +139,9 @@ function ProblemPage() {
                 />
               </Panel>
 
-              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+              <PanelResizeHandle className="h-1 bg-gradient-to-r from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-row-resize shadow-lg" />
 
               {/* Bottom panel - Output Panel*/}
-
               <Panel defaultSize={30} minSize={30}>
                 <OutputPanel output={output} />
               </Panel>

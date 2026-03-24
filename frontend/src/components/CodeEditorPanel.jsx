@@ -11,15 +11,19 @@ function CodeEditorPanel({
   onRunCode,
 }) {
   return (
-    <div className="h-full bg-base-300 flex flex-col">
-      <div className="flex items-center justify-between px-4 py-3 bg-base-100 border-t border-base-300">
-        <div className="flex items-center gap-3">
+    <div className="h-full flex flex-col bg-gradient-to-br from-base-200 to-base-300">
+      <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-base-100 to-base-200 border-b border-base-300/50 shadow-sm">
+        <div className="flex items-center gap-4">
           <img
             src={LANGUAGE_CONFIG[selectedLanguage].icon}
             alt={LANGUAGE_CONFIG[selectedLanguage].name}
-            className="size-6"
+            className="w-6 h-6"
           />
-          <select className="select select-sm" value={selectedLanguage} onChange={onLanguageChange}>
+          <select
+            className="select select-md font-bold border-base-300/60 bg-base-100 hover:border-primary/40"
+            value={selectedLanguage}
+            onChange={onLanguageChange}
+          >
             {Object.entries(LANGUAGE_CONFIG).map(([key, lang]) => (
               <option key={key} value={key}>
                 {lang.name}
@@ -28,22 +32,26 @@ function CodeEditorPanel({
           </select>
         </div>
 
-        <button className="btn btn-primary btn-sm gap-2" disabled={isRunning} onClick={onRunCode}>
+        <button
+          className="btn btn-md bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-lg hover:shadow-xl border-none disabled:opacity-50 gap-2"
+          disabled={isRunning}
+          onClick={onRunCode}
+        >
           {isRunning ? (
             <>
-              <Loader2Icon className="size-4 animate-spin" />
-              Running...
+              <Loader2Icon className="w-5 h-5 animate-spin" />
+              <span>Running...</span>
             </>
           ) : (
             <>
-              <PlayIcon className="size-4" />
-              Run Code
+              <PlayIcon className="w-5 h-5" />
+              <span>Run Code</span>
             </>
           )}
         </button>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 overflow-hidden">
         <Editor
           height={"100%"}
           language={LANGUAGE_CONFIG[selectedLanguage].monacoLang}
@@ -51,11 +59,14 @@ function CodeEditorPanel({
           onChange={onCodeChange}
           theme="vs-dark"
           options={{
-            fontSize: 16,
+            fontSize: 15,
             lineNumbers: "on",
             scrollBeyondLastLine: false,
             automaticLayout: true,
             minimap: { enabled: false },
+            padding: { top: 16, bottom: 16 },
+            fontFamily: "'Fira Code', 'Courier New', monospace",
+            lineHeight: 22,
           }}
         />
       </div>

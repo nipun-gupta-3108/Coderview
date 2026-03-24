@@ -3,10 +3,117 @@
   themes: all;
 }
 
-/* Add cursor pointer to buttons by default - this is coming from tailwind docs */
+/* Global styles */
 @layer base {
+  /* Typography improvements */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-base-100 via-base-100 to-base-200;
+  }
+
+  /* Smooth transitions for all interactive elements */
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role="button"]:not(:disabled),
+  a {
     cursor: pointer;
+    @apply transition-all duration-200 ease-out;
+  }
+
+  /* Better focus states */
+  button:focus-visible,
+  a:focus-visible {
+    @apply outline-offset-2 outline-2 outline-primary;
+  }
+}
+
+/* Custom utility layers */
+@layer components {
+  /* Premium card styling */
+  .card-premium {
+    @apply bg-gradient-to-br from-base-100 to-base-200 border border-base-300/50 shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+
+  .card-premium-dark {
+    @apply bg-gradient-to-br from-base-200 to-base-300 border border-base-400/30 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Enhanced button styles */
+  .btn-gradient-primary {
+    @apply bg-gradient-to-r from-primary via-primary-focus to-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
+  }
+
+  .btn-gradient-secondary {
+    @apply bg-gradient-to-r from-secondary via-secondary-focus to-accent text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-md border border-white/10;
+  }
+
+  /* Badge enhancements */
+  .badge-enhanced {
+    @apply font-semibold shadow-md px-3 py-1.5 rounded-full;
+  }
+
+  /* Icon with background */
+  .icon-box {
+    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300;
+  }
+
+  .icon-box-primary {
+    @apply icon-box bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:from-primary/30 hover:to-primary/20;
+  }
+
+  .icon-box-secondary {
+    @apply icon-box bg-gradient-to-br from-secondary/20 to-secondary/10 text-secondary hover:from-secondary/30 hover:to-secondary/20;
+  }
+
+  .icon-box-accent {
+    @apply icon-box bg-gradient-to-br from-accent/20 to-accent/10 text-accent hover:from-accent/30 hover:to-accent/20;
+  }
+
+  /* Animated gradient underline */
+  .nav-link-active {
+    @apply relative;
+  }
+
+  .nav-link-active::after {
+    content: '';
+    @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent rounded-full;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full animate-pulse;
+  }
+
+  .status-dot-active {
+    @apply status-dot bg-success;
+  }
+
+  /* Smooth scrollbar */
+  .scrollbar-smooth {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+  }
+
+  .scrollbar-smooth::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .scrollbar-smooth::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .scrollbar-smooth::-webkit-scrollbar-thumb {
+    @apply bg-base-300 rounded-full hover:bg-base-400;
   }
 }
