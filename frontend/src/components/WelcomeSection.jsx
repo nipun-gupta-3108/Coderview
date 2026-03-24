@@ -25,7 +25,7 @@ function WelcomeSection({ onCreateSession }) {
           </div>
           <button
             onClick={onCreateSession}
-            className="group px-8 py-4 bg-gradient-to-r from-primary via-primary-focus to-secondary rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 w-full sm:w-auto"
+            className="group px-8 py-4 bg-gradient-to-r from-primary to-secondary rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 w-full sm:w-auto"
           >
             <div className="flex items-center justify-center gap-3 text-white font-bold text-lg">
               <ZapIcon className="w-6 h-6" />

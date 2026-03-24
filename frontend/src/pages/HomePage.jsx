@@ -35,7 +35,7 @@ function HomePage() {
 
           {/* AUTH BTN */}
           <SignInButton mode="modal">
-            <button className="group px-7 py-3 bg-gradient-to-r from-primary via-primary-focus to-secondary text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2">
+            <button className="group px-7 py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2">
               <span>Get Started</span>
               <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>

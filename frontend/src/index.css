@@ -42,11 +42,11 @@
 
   /* Enhanced button styles */
   .btn-gradient-primary {
-    @apply bg-gradient-to-r from-primary via-primary-focus to-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
+    @apply bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
   }
 
   .btn-gradient-secondary {
-    @apply bg-gradient-to-r from-secondary via-secondary-focus to-accent text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
+    @apply bg-gradient-to-r from-secondary to-accent text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
   }
 
   /* Glass morphism effect */
