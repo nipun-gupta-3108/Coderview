@@ -15,6 +15,10 @@ const LANGUAGE_CONFIG = {
     language: "java",
     fileName: "Solution.java",
   },
+  cpp: {
+    language: "cpp",
+    fileName: "main.cpp",
+  },
 };
 
 export async function executeCode(req, res) {
