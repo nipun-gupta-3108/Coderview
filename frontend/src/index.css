@@ -37,7 +37,7 @@
   }
 
   .card-premium-dark {
-    @apply bg-gradient-to-br from-base-200 to-base-300 border border-base-400/30 shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-gradient-to-br from-base-200 to-base-300 border border-base-300/30 shadow-lg hover:shadow-xl transition-all duration-300;
   }
 
   /* Enhanced button styles */
@@ -114,6 +114,6 @@
   }
 
   .scrollbar-smooth::-webkit-scrollbar-thumb {
-    @apply bg-base-300 rounded-full hover:bg-base-400;
+    @apply bg-base-300 rounded-full hover:bg-base-300;
   }
 }
