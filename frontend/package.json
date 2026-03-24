@@ -25,7 +25,7 @@
     "react-resizable-panels": "^4.7.5",
     "react-router": "^7.9.4",
     "react-router-dom": "^7.9.4",
-    "stream-chat": "^8.57.3",
+    "stream-chat": "^9.38.0",
     "stream-chat-react": "^13.14.2",
     "tailwindcss": "^4.1.14"
   },
