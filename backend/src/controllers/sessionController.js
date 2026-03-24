@@ -25,7 +25,7 @@ export async function createSession(req, res) {
       host: userId,
       callId,
     });
-    
+
     // create stream video call
     const call = streamClient.video.call("default", callId);
     await call.getOrCreate({
