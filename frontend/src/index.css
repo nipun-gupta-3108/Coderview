@@ -64,20 +64,16 @@
   }
 
   /* Icon with background */
-  .icon-box {
-    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300;
-  }
-
   .icon-box-primary {
-    @apply icon-box bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:from-primary/30 hover:to-primary/20;
+    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300 bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:from-primary/30 hover:to-primary/20;
   }
 
   .icon-box-secondary {
-    @apply icon-box bg-gradient-to-br from-secondary/20 to-secondary/10 text-secondary hover:from-secondary/30 hover:to-secondary/20;
+    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300 bg-gradient-to-br from-secondary/20 to-secondary/10 text-secondary hover:from-secondary/30 hover:to-secondary/20;
   }
 
   .icon-box-accent {
-    @apply icon-box bg-gradient-to-br from-accent/20 to-accent/10 text-accent hover:from-accent/30 hover:to-accent/20;
+    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300 bg-gradient-to-br from-accent/20 to-accent/10 text-accent hover:from-accent/30 hover:to-accent/20;
   }
 
   /* Animated gradient underline */
@@ -87,16 +83,12 @@
 
   .nav-link-active::after {
     content: '';
-    @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent rounded-full;
+    @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary rounded-full;
   }
 
   /* Status indicators */
-  .status-dot {
-    @apply w-2 h-2 rounded-full animate-pulse;
-  }
-
   .status-dot-active {
-    @apply status-dot bg-success;
+    @apply w-2 h-2 rounded-full animate-pulse bg-success;
   }
 
   /* Smooth scrollbar */
