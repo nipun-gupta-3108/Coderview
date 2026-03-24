@@ -1,43 +1,33 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
-
-import AppLayout from "./components/layout/AppLayout";
+import { useUser } from "@clerk/clerk-react";
+import { Navigate, Route, Routes } from "react-router";
 import HomePage from "./pages/HomePage";
+
+import { Toaster } from "react-hot-toast";
 import DashboardPage from "./pages/DashboardPage";
+import ProblemPage from "./pages/ProblemPage";
 import ProblemsPage from "./pages/ProblemsPage";
-import ProblemDetailPage from "./pages/ProblemDetailPage";
 import SessionPage from "./pages/SessionPage";
-import LoadingScreen from "./components/ui/LoadingScreen";
-import NotFoundPage from "./pages/NotFoundPage";
 
-function ProtectedRoute({ children }) {
-  const { isSignedIn, isLoaded } = useAuth();
-  if (!isLoaded) return <LoadingScreen />;
-  if (!isSignedIn) return <Navigate to="/" replace />;
-  return children;
-}
+function App() {
+  const { isSignedIn, isLoaded } = useUser();
 
-export default function App() {
+  // this will get rid of the flickering effect
+  if (!isLoaded) return null;
+
   return (
-    <Routes>
-      {/* Public */}
-      <Route path="/" element={<HomePage />} />
+    <>
+      <Routes>
+        <Route path="/" element={!isSignedIn ? <HomePage /> : <Navigate to={"/dashboard"} />} />
+        <Route path="/dashboard" element={isSignedIn ? <DashboardPage /> : <Navigate to={"/"} />} />
 
-      {/* Protected — all wrapped in sidebar layout */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/problems" element={<ProblemsPage />} />
-        <Route path="/problems/:id" element={<ProblemDetailPage />} />
-        <Route path="/session/:id" element={<SessionPage />} />
-      </Route>
+        <Route path="/problems" element={isSignedIn ? <ProblemsPage /> : <Navigate to={"/"} />} />
+        <Route path="/problem/:id" element={isSignedIn ? <ProblemPage /> : <Navigate to={"/"} />} />
+        <Route path="/session/:id" element={isSignedIn ? <SessionPage /> : <Navigate to={"/"} />} />
+      </Routes>
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+      <Toaster toastOptions={{ duration: 3000 }} />
+    </>
   );
 }
+
+export default App;

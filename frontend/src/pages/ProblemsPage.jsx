@@ -1,150 +1,96 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, Filter, ChevronRight, Code2 } from "lucide-react";
-import { PROBLEMS, DIFFICULTY_COLORS } from "../constants/problems";
+import { Link } from "react-router";
+import Navbar from "../components/Navbar";
 
-const DIFFICULTIES = ["all", "easy", "medium", "hard"];
-const ALL_TAGS = [...new Set(PROBLEMS.flatMap(p => p.tags))];
+import { PROBLEMS } from "../data/problems";
+import { ChevronRightIcon, Code2Icon } from "lucide-react";
+import { getDifficultyBadgeClass } from "../lib/utils";
 
-export default function ProblemsPage() {
-  const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [difficulty, setDifficulty] = useState("all");
-  const [tag, setTag] = useState("all");
+function ProblemsPage() {
+  const problems = Object.values(PROBLEMS);
 
-  const filtered = PROBLEMS.filter(p => {
-    const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
-    const matchDiff = difficulty === "all" || p.difficulty === difficulty;
-    const matchTag = tag === "all" || p.tags.includes(tag);
-    return matchSearch && matchDiff && matchTag;
-  });
-
-  const counts = {
-    all: PROBLEMS.length,
-    easy: PROBLEMS.filter(p => p.difficulty === "easy").length,
-    medium: PROBLEMS.filter(p => p.difficulty === "medium").length,
-    hard: PROBLEMS.filter(p => p.difficulty === "hard").length,
-  };
+  const easyProblemsCount = problems.filter((p) => p.difficulty === "Easy").length;
+  const mediumProblemsCount = problems.filter((p) => p.difficulty === "Medium").length;
+  const hardProblemsCount = problems.filter((p) => p.difficulty === "Hard").length;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="mb-8 animate-in">
-        <h1 className="font-display text-2xl font-bold text-slate-900">Practice problems</h1>
-        <p className="text-slate-500 text-sm mt-1">Sharpen your skills with curated interview problems</p>
-      </div>
+    <div className="min-h-screen bg-base-200">
+      <Navbar />
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 mb-6 animate-in-delay-1">
-        {/* Search */}
-        <div className="relative flex-1 min-w-48">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            className="input pl-9 py-2.5 text-sm"
-            placeholder="Search problems or tags..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        {/* HEADER */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">Practice Problems</h1>
+          <p className="text-base-content/70">
+            Sharpen your coding skills with these curated problems
+          </p>
         </div>
 
-        {/* Tag filter */}
-        <div className="relative">
-          <select
-            className="select py-2.5 pr-8 text-sm min-w-36"
-            value={tag}
-            onChange={e => setTag(e.target.value)}
-          >
-            <option value="all">All topics</option>
-            {ALL_TAGS.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <Filter size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-        </div>
-      </div>
-
-      {/* Difficulty tabs */}
-      <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg mb-6 animate-in-delay-1 w-fit">
-        {DIFFICULTIES.map(d => (
-          <button
-            key={d}
-            onClick={() => setDifficulty(d)}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all capitalize ${
-              difficulty === d
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {d}
-            <span className={`ml-1.5 text-xs ${difficulty === d ? "text-slate-400" : "text-slate-300"}`}>
-              {counts[d]}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Stats row */}
-      <div className="flex gap-4 mb-6 animate-in-delay-2">
-        <div className="flex items-center gap-1.5 text-sm text-slate-500">
-          <span className="font-medium text-slate-900">{filtered.length}</span> problems
-        </div>
-        <div className="text-slate-300">|</div>
-        <div className="flex items-center gap-3 text-xs">
-          <span className="badge-easy">Easy {counts.easy}</span>
-          <span className="badge-medium">Medium {counts.medium}</span>
-          <span className="badge-hard">Hard {counts.hard}</span>
-        </div>
-      </div>
-
-      {/* Problem list */}
-      <div className="space-y-2 animate-in-delay-2">
-        {filtered.length === 0 ? (
-          <div className="card p-12 text-center">
-            <Code2 size={24} className="text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-500 text-sm">No problems match your search.</p>
-          </div>
-        ) : (
-          filtered.map((problem, i) => (
-            <button
+        {/* PROBLEMS LIST */}
+        <div className="space-y-4">
+          {problems.map((problem) => (
+            <Link
               key={problem.id}
-              onClick={() => navigate(`/problems/${problem.id}`)}
-              className="card w-full px-5 py-4 flex items-center gap-4 hover:shadow-md hover:border-blue-100 transition-all group text-left"
-              style={{ animationDelay: `${i * 40}ms` }}
+              to={`/problem/${problem.id}`}
+              className="card bg-base-100 hover:scale-[1.01] transition-transform"
             >
-              {/* Index */}
-              <span className="text-slate-300 text-sm font-mono w-7 flex-shrink-0 text-right">
-                {String(i + 1).padStart(2, "0")}
-              </span>
+              <div className="card-body">
+                <div className="flex items-center justify-between gap-4">
+                  {/* LEFT SIDE */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="size-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Code2Icon className="size-6 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h2 className="text-xl font-bold">{problem.title}</h2>
+                          <span className={`badge ${getDifficultyBadgeClass(problem.difficulty)}`}>
+                            {problem.difficulty}
+                          </span>
+                        </div>
+                        <p className="text-sm text-base-content/60"> {problem.category}</p>
+                      </div>
+                    </div>
+                    <p className="text-base-content/80 mb-3">{problem.description.text}</p>
+                  </div>
+                  {/* RIGHT SIDE */}
 
-              {/* Icon */}
-              <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
-                <Code2 size={15} className="text-blue-600" />
+                  <div className="flex items-center gap-2 text-primary">
+                    <span className="font-medium">Solve</span>
+                    <ChevronRightIcon className="size-5" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* STATS FOOTER */}
+        <div className="mt-12 card bg-base-100 shadow-lg">
+          <div className="card-body">
+            <div className="stats stats-vertical lg:stats-horizontal">
+              <div className="stat">
+                <div className="stat-title">Total Problems</div>
+                <div className="stat-value text-primary">{problems.length}</div>
               </div>
 
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium text-slate-900 text-sm">{problem.title}</span>
-                  <span className={DIFFICULTY_COLORS[problem.difficulty]}>{problem.difficulty}</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {problem.tags.map(t => (
-                    <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+              <div className="stat">
+                <div className="stat-title">Easy</div>
+                <div className="stat-value text-success">{easyProblemsCount}</div>
               </div>
-
-              {/* Description preview */}
-              <p className="hidden md:block text-xs text-slate-400 max-w-xs truncate flex-shrink-0">
-                {problem.description}
-              </p>
-
-              <ChevronRight size={15} className="text-slate-300 group-hover:text-blue-400 transition-colors flex-shrink-0" />
-            </button>
-          ))
-        )}
+              <div className="stat">
+                <div className="stat-title">Medium</div>
+                <div className="stat-value text-warning">{mediumProblemsCount}</div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Hard</div>
+                <div className="stat-value text-error">{hardProblemsCount}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+export default ProblemsPage;

@@ -1,364 +1,296 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
-import Editor from "@monaco-editor/react";
-import {
-  Play, RotateCcw, Loader2, CheckCircle2, XCircle,
-  MessageSquare, PhoneOff, Copy, Check, Clock,
-  Users, ChevronDown, ChevronRight, Zap, Share2
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
+import { PROBLEMS } from "../data/problems";
+import { executeCode } from "../lib/piston";
+import Navbar from "../components/Navbar";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { getDifficultyBadgeClass } from "../lib/utils";
+import { Loader2Icon, LogOutIcon, PhoneOffIcon } from "lucide-react";
+import CodeEditorPanel from "../components/CodeEditorPanel";
+import OutputPanel from "../components/OutputPanel";
 
-import { getSessionById, endSession } from "../lib/api";
-import { PROBLEMS, DIFFICULTY_COLORS, LANGUAGES } from "../constants/problems";
-import VideoPanel from "../components/session/VideoPanel";
-import ChatPanel from "../components/session/ChatPanel";
-import InviteModal from "../components/session/InviteModal";
-import { useConfetti } from "../hooks/useConfetti";
-import { useToast } from "../components/ui/Toast";
+import useStreamClient from "../hooks/useStreamClient";
+import { StreamCall, StreamVideo } from "@stream-io/video-react-sdk";
+import VideoCallUI from "../components/VideoCallUI";
 
-const LANG_LABELS = { javascript: "JavaScript", python: "Python", java: "Java" };
-
-function SessionTimer({ startTime }) {
-  const [elapsed, setElapsed] = useState(0);
-  useEffect(() => {
-    const base = startTime ? Math.max(0, Date.now() - new Date(startTime).getTime()) : 0;
-    setElapsed(Math.floor(base / 1000));
-    const t = setInterval(() => setElapsed(s => s + 1), 1000);
-    return () => clearInterval(t);
-  }, [startTime]);
-  const m = String(Math.floor(elapsed / 60)).padStart(2, "0");
-  const s = String(elapsed % 60).padStart(2, "0");
-  return (
-    <span className="flex items-center gap-1 text-slate-500 text-xs font-mono bg-slate-100 px-2 py-1 rounded-md">
-      <Clock size={10} /> {m}:{s}
-    </span>
-  );
-}
-
-function ProblemPane({ problem }) {
-  const [descOpen, setDescOpen] = useState(true);
-  if (!problem) return null;
-
-  return (
-    <div className="w-[300px] flex-shrink-0 bg-white border-r border-slate-200 overflow-y-auto">
-      <div className="p-4 space-y-5">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <h2 className="font-display font-bold text-slate-900 text-sm">{problem.title}</h2>
-            <span className={DIFFICULTY_COLORS[problem.difficulty]}>{problem.difficulty}</span>
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {problem.tags.map(t => (
-              <span key={t} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">{t}</span>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <button
-            className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2 hover:text-slate-800 transition-colors"
-            onClick={() => setDescOpen(!descOpen)}
-          >
-            {descOpen ? <ChevronDown size={11} /> : <ChevronRight size={11} />} Description
-          </button>
-          {descOpen && <p className="text-slate-600 text-xs leading-relaxed">{problem.description}</p>}
-        </div>
-
-        <div>
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Examples</p>
-          <div className="space-y-2">
-            {problem.examples.slice(0, 2).map((ex, i) => (
-              <div key={i} className="bg-slate-50 border border-slate-100 rounded-lg p-3 space-y-1.5 text-xs">
-                <div><span className="text-slate-400">Input: </span><code className="font-mono text-slate-700 text-[11px]">{ex.input}</code></div>
-                <div><span className="text-slate-400">Output: </span><code className="font-mono text-slate-700 text-[11px]">{ex.output}</code></div>
-                {ex.explanation && <p className="text-slate-400 text-[11px]">{ex.explanation}</p>}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Constraints</p>
-          <ul className="space-y-1.5">
-            {problem.constraints.map((c, i) => (
-              <li key={i} className="text-[11px] text-slate-500 flex gap-1.5 items-start">
-                <span className="text-blue-400 flex-shrink-0 mt-px">·</span>
-                <code className="font-mono">{c}</code>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function SessionPage() {
-  const { id } = useParams();
+function SessionPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { user } = useUser();
-  const queryClient = useQueryClient();
-
-  const { fire } = useConfetti();
-  const { toast } = useToast();
-
-  const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState("");
   const [output, setOutput] = useState(null);
-  const [running, setRunning] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [showInvite, setShowInvite] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
-  const { data: session, isLoading } = useQuery({
-    queryKey: ["session", id],
-    queryFn: () => getSessionById(id),
-    refetchInterval: 8000,
-  });
+  const { data: sessionData, isLoading: loadingSession, refetch } = useSessionById(id);
 
-  const endMutation = useMutation({
-    mutationFn: () => endSession(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["sessions"]);
-      navigate("/dashboard");
-    },
-  });
+  const joinSessionMutation = useJoinSession();
+  const endSessionMutation = useEndSession();
 
-  const problem = session ? PROBLEMS.find(p => p.title === session.problem) : null;
+  const session = sessionData?.session;
+  const isHost = session?.host?.clerkId === user?.id;
+  const isParticipant = session?.participant?.clerkId === user?.id;
 
+  const { call, channel, chatClient, isInitializingCall, streamClient } = useStreamClient(
+    session,
+    loadingSession,
+    isHost,
+    isParticipant
+  );
+
+  // find the problem data based on session problem title
+  const problemData = session?.problem
+    ? Object.values(PROBLEMS).find((p) => p.title === session.problem)
+    : null;
+
+  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+  const [code, setCode] = useState(problemData?.starterCode?.[selectedLanguage] || "");
+
+  // auto-join session if user is not already a participant and not the host
   useEffect(() => {
-    if (problem && !code) {
-      setCode(problem.starterCode?.javascript ?? "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [problem]);
+    if (!session || !user || loadingSession) return;
+    if (isHost || isParticipant) return;
 
-  const handleLanguageChange = (lang) => {
-    setLanguage(lang);
-    if (problem) setCode(problem.starterCode?.[lang] ?? "");
+    joinSessionMutation.mutate(id, { onSuccess: refetch });
+
+    // remove the joinSessionMutation, refetch from dependencies to avoid infinite loop
+  }, [session, user, loadingSession, isHost, isParticipant, id]);
+
+  // redirect the "participant" when session ends
+  useEffect(() => {
+    if (!session || loadingSession) return;
+
+    if (session.status === "completed") navigate("/dashboard");
+  }, [session, loadingSession, navigate]);
+
+  // update code when problem loads or changes
+  useEffect(() => {
+    if (problemData?.starterCode?.[selectedLanguage]) {
+      setCode(problemData.starterCode[selectedLanguage]);
+    }
+  }, [problemData, selectedLanguage]);
+
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value;
+    setSelectedLanguage(newLang);
+    // use problem-specific starter code
+    const starterCode = problemData?.starterCode?.[newLang] || "";
+    setCode(starterCode);
     setOutput(null);
   };
 
-  const handleRun = async () => {
-    if (language !== "javascript") {
-      setOutput({ type: "info", text: `${LANG_LABELS[language]} execution coming soon. Use JavaScript for now!` });
-      return;
-    }
-    setRunning(true);
+  const handleRunCode = async () => {
+    setIsRunning(true);
     setOutput(null);
-    await new Promise(r => setTimeout(r, 500));
-    try {
-      const logs = [];
-      const fn = new Function("console", code);
-      fn({ log: (...args) => logs.push(args.map(a => { try { return JSON.stringify(a); } catch { return String(a); } }).join(" ")) });
-      setOutput({ type: "success", lines: logs });
 
-      const looksCorrect = logs.length > 0 && problem?.examples?.every(ex => {
-        const expected = ex.output.replace(/[[\]]/g, "").split(",")[0]?.trim();
-        return expected && logs.some(l => l.includes(expected));
-      });
-
-      if (looksCorrect) {
-        fire({ count: 160 });
-        toast("All test cases passed!", "success");
-      } else if (logs.length > 0) {
-        toast("Code executed successfully.", "info");
-      }
-    } catch (err) {
-      setOutput({ type: "error", text: err.message });
-      toast("Runtime error — check your syntax.", "error");
-    }
-    setRunning(false);
+    const result = await executeCode(selectedLanguage, code);
+    setOutput(result);
+    setIsRunning(false);
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleEnd = () => {
-    if (confirm("End this session? This will disconnect both participants.")) {
-      endMutation.mutate();
+  const handleEndSession = () => {
+    if (confirm("Are you sure you want to end this session? All participants will be notified.")) {
+      // this will navigate the HOST to dashboard
+      endSessionMutation.mutate(id, { onSuccess: () => navigate("/dashboard") });
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="text-center">
-          <Loader2 size={24} className="text-blue-500 animate-spin mx-auto mb-3" />
-          <p className="text-slate-500 text-sm">Loading session...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="text-center">
-          <p className="text-slate-500 mb-4">Session not found.</p>
-          <button onClick={() => navigate("/dashboard")} className="btn-primary">Back to dashboard</button>
-        </div>
-      </div>
-    );
-  }
-
-  const isHost = session.host?.clerkId === user?.id || session.host === user?.id || String(session.host?._id) === String(user?.id);
-  console.log("[isHost debug]", { hostClerkId: session.host?.clerkId, hostId: session.host?._id, hostRaw: session.host, userId: user?.id, isHost });
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-slate-50">
+    <div className="h-screen bg-base-100 flex flex-col">
+      <Navbar />
 
-      {/* ── Top bar ── */}
-      <header className="flex items-center gap-3 px-5 py-2.5 bg-white border-b border-slate-200 flex-shrink-0 shadow-sm z-10">
-        <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
-          <Zap size={13} className="text-white" fill="white" />
-        </div>
-        <div className="w-px h-5 bg-slate-200" />
-        <div className="flex items-center gap-2.5 flex-1 min-w-0">
-          <span className="font-display font-bold text-slate-900 text-sm truncate">{session.problem}</span>
-          {session.difficulty && <span className={DIFFICULTY_COLORS[session.difficulty]}>{session.difficulty}</span>}
-          <div className="hidden md:flex items-center gap-1.5 text-slate-400 text-xs">
-            <Users size={11} />
-            <span>{session.participant ? "2" : "1"}/2</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <SessionTimer startTime={session.createdAt} />
-          {!session.participant && (
-              <button onClick={() => setShowInvite(true)} className="btn-secondary text-xs py-1.5 px-3 gap-1.5">
-                <Share2 size={12} />
-                Invite
-              </button>
-            )}
-          <button
-            onClick={() => setChatOpen(!chatOpen)}
-            className={`btn-ghost text-xs py-1.5 px-3 gap-1.5 ${chatOpen ? "text-blue-600 bg-blue-50 rounded-lg" : ""}`}
-          >
-            <MessageSquare size={13} /> Chat
-          </button>
-          {isHost && (
-            <button
-              onClick={handleEnd}
-              disabled={endMutation.isPending}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 text-xs font-medium transition-colors border border-red-100"
-            >
-              {endMutation.isPending ? <Loader2 size={11} className="animate-spin" /> : <PhoneOff size={11} />}
-              End
-            </button>
-          )}
-        </div>
-      </header>
+      <div className="flex-1">
+        <PanelGroup direction="horizontal">
+          {/* LEFT PANEL - CODE EDITOR & PROBLEM DETAILS */}
+          <Panel defaultSize={50} minSize={30}>
+            <PanelGroup direction="vertical">
+              {/* PROBLEM DSC PANEL */}
+              <Panel defaultSize={50} minSize={20}>
+                <div className="h-full overflow-y-auto bg-base-200">
+                  {/* HEADER SECTION */}
+                  <div className="p-6 bg-base-100 border-b border-base-300">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h1 className="text-3xl font-bold text-base-content">
+                          {session?.problem || "Loading..."}
+                        </h1>
+                        {problemData?.category && (
+                          <p className="text-base-content/60 mt-1">{problemData.category}</p>
+                        )}
+                        <p className="text-base-content/60 mt-2">
+                          Host: {session?.host?.name || "Loading..."} •{" "}
+                          {session?.participant ? 2 : 1}/2 participants
+                        </p>
+                      </div>
 
-      {/* ── Main content ── */}
-      <div className="flex flex-1 overflow-hidden">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`badge badge-lg ${getDifficultyBadgeClass(
+                            session?.difficulty
+                          )}`}
+                        >
+                          {session?.difficulty.slice(0, 1).toUpperCase() +
+                            session?.difficulty.slice(1) || "Easy"}
+                        </span>
+                        {isHost && session?.status === "active" && (
+                          <button
+                            onClick={handleEndSession}
+                            disabled={endSessionMutation.isPending}
+                            className="btn btn-error btn-sm gap-2"
+                          >
+                            {endSessionMutation.isPending ? (
+                              <Loader2Icon className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <LogOutIcon className="w-4 h-4" />
+                            )}
+                            End Session
+                          </button>
+                        )}
+                        {session?.status === "completed" && (
+                          <span className="badge badge-ghost badge-lg">Completed</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
-        {/* Problem pane */}
-        <ProblemPane problem={problem} />
+                  <div className="p-6 space-y-6">
+                    {/* problem desc */}
+                    {problemData?.description && (
+                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
+                        <h2 className="text-xl font-bold mb-4 text-base-content">Description</h2>
+                        <div className="space-y-3 text-base leading-relaxed">
+                          <p className="text-base-content/90">{problemData.description.text}</p>
+                          {problemData.description.notes?.map((note, idx) => (
+                            <p key={idx} className="text-base-content/90">
+                              {note}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-        {/* Code editor */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-slate-950 min-w-0">
-          {/* Toolbar */}
-          <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 flex-shrink-0">
-            <div className="flex items-center gap-0.5 p-0.5 bg-slate-800 rounded-lg">
-              {LANGUAGES.map(lang => (
-                <button
-                  key={lang}
-                  onClick={() => handleLanguageChange(lang)}
-                  className={`px-3 py-1 rounded-md text-xs font-mono font-medium transition-all ${
-                    language === lang ? "bg-slate-600 text-white" : "text-slate-500 hover:text-slate-300"
-                  }`}
-                >
-                  {LANG_LABELS[lang]}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <button onClick={handleCopyCode} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 text-xs transition-all">
-                {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                {copied ? "Copied" : "Copy"}
-              </button>
-              <button onClick={() => problem && setCode(problem.starterCode?.[language] ?? "")} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 text-xs transition-all">
-                <RotateCcw size={12} /> Reset
-              </button>
-              <button onClick={handleRun} disabled={running} className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-all disabled:opacity-60">
-                {running ? <Loader2 size={11} className="animate-spin" /> : <Play size={11} fill="white" />}
-                {running ? "Running..." : "Run code"}
-              </button>
-            </div>
-          </div>
+                    {/* examples section */}
+                    {problemData?.examples && problemData.examples.length > 0 && (
+                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
+                        <h2 className="text-xl font-bold mb-4 text-base-content">Examples</h2>
 
-          {/* Monaco */}
-          <div className="flex-1 overflow-hidden">
-            <Editor
-              height="100%"
-              language={language}
-              value={code}
-              onChange={val => setCode(val ?? "")}
-              theme="vs-dark"
-              options={{
-                fontSize: 13,
-                fontFamily: "'DM Mono', monospace",
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                lineNumbers: "on",
-                renderLineHighlight: "line",
-                padding: { top: 16, bottom: 16 },
-                tabSize: 2,
-                wordWrap: "on",
-                smoothScrolling: true,
-                cursorBlinking: "smooth",
-              }}
-            />
-          </div>
+                        <div className="space-y-4">
+                          {problemData.examples.map((example, idx) => (
+                            <div key={idx}>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="badge badge-sm">{idx + 1}</span>
+                                <p className="font-semibold text-base-content">Example {idx + 1}</p>
+                              </div>
+                              <div className="bg-base-200 rounded-lg p-4 font-mono text-sm space-y-1.5">
+                                <div className="flex gap-2">
+                                  <span className="text-primary font-bold min-w-[70px]">
+                                    Input:
+                                  </span>
+                                  <span>{example.input}</span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <span className="text-secondary font-bold min-w-[70px]">
+                                    Output:
+                                  </span>
+                                  <span>{example.output}</span>
+                                </div>
+                                {example.explanation && (
+                                  <div className="pt-2 border-t border-base-300 mt-2">
+                                    <span className="text-base-content/60 font-sans text-xs">
+                                      <span className="font-semibold">Explanation:</span>{" "}
+                                      {example.explanation}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-          {/* Output */}
-          <div className="h-36 border-t border-slate-800 bg-slate-900 flex flex-col flex-shrink-0">
-            <div className="flex items-center gap-2.5 px-4 py-2 border-b border-slate-800">
-              <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Output</span>
-              {output && (
-                <span className={`flex items-center gap-1 text-[11px] font-medium ${
-                  output.type === "success" ? "text-emerald-400" :
-                  output.type === "error" ? "text-red-400" : "text-blue-400"
-                }`}>
-                  {output.type === "success" ? <CheckCircle2 size={10} /> : output.type === "error" ? <XCircle size={10} /> : null}
-                  {output.type === "success" ? "Success" : output.type === "error" ? "Error" : "Info"}
-                </span>
+                    {/* Constraints */}
+                    {problemData?.constraints && problemData.constraints.length > 0 && (
+                      <div className="bg-base-100 rounded-xl shadow-sm p-5 border border-base-300">
+                        <h2 className="text-xl font-bold mb-4 text-base-content">Constraints</h2>
+                        <ul className="space-y-2 text-base-content/90">
+                          {problemData.constraints.map((constraint, idx) => (
+                            <li key={idx} className="flex gap-2">
+                              <span className="text-primary">•</span>
+                              <code className="text-sm">{constraint}</code>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Panel>
+
+              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+
+              <Panel defaultSize={50} minSize={20}>
+                <PanelGroup direction="vertical">
+                  <Panel defaultSize={70} minSize={30}>
+                    <CodeEditorPanel
+                      selectedLanguage={selectedLanguage}
+                      code={code}
+                      isRunning={isRunning}
+                      onLanguageChange={handleLanguageChange}
+                      onCodeChange={(value) => setCode(value)}
+                      onRunCode={handleRunCode}
+                    />
+                  </Panel>
+
+                  <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors cursor-row-resize" />
+
+                  <Panel defaultSize={30} minSize={15}>
+                    <OutputPanel output={output} />
+                  </Panel>
+                </PanelGroup>
+              </Panel>
+            </PanelGroup>
+          </Panel>
+
+          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+
+          {/* RIGHT PANEL - VIDEO CALLS & CHAT */}
+          <Panel defaultSize={50} minSize={30}>
+            <div className="h-full bg-base-200 p-4 overflow-auto">
+              {isInitializingCall ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <Loader2Icon className="w-12 h-12 mx-auto animate-spin text-primary mb-4" />
+                    <p className="text-lg">Connecting to video call...</p>
+                  </div>
+                </div>
+              ) : !streamClient || !call ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="card bg-base-100 shadow-xl max-w-md">
+                    <div className="card-body items-center text-center">
+                      <div className="w-24 h-24 bg-error/10 rounded-full flex items-center justify-center mb-4">
+                        <PhoneOffIcon className="w-12 h-12 text-error" />
+                      </div>
+                      <h2 className="card-title text-2xl">Connection Failed</h2>
+                      <p className="text-base-content/70">Unable to connect to the video call</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full">
+                  <StreamVideo client={streamClient}>
+                    <StreamCall call={call}>
+                      <VideoCallUI chatClient={chatClient} channel={channel} />
+                    </StreamCall>
+                  </StreamVideo>
+                </div>
               )}
             </div>
-            <div className="flex-1 px-4 py-3 font-mono text-xs overflow-y-auto leading-relaxed">
-              {!output && !running && <span className="text-slate-600 italic">Click "Run code" to execute...</span>}
-              {running && <span className="text-slate-500 flex items-center gap-2"><Loader2 size={11} className="animate-spin" />Executing...</span>}
-              {output?.type === "success" && (
-                output.lines.length === 0
-                  ? <span className="text-slate-500 italic">No output.</span>
-                  : output.lines.map((l, i) => <div key={i} className="text-emerald-300"><span className="text-slate-600 mr-2 select-none">&gt;</span>{l}</div>)
-              )}
-              {output?.type === "error" && <div className="text-red-400 whitespace-pre-wrap">{output.text}</div>}
-              {output?.type === "info" && <div className="text-blue-400">{output.text}</div>}
-            </div>
-          </div>
-        </div>
-
-        {/* Video column */}
-        <div className="w-56 flex-shrink-0 border-l border-slate-800 flex flex-col">
-          <VideoPanel callId={session.callId} session={session} currentUser={user} />
-        </div>
-
-        {/* Chat drawer */}
-        {chatOpen && (
-          <div className="w-72 flex-shrink-0 border-l border-slate-200 animate-slide-in-left">
-            <ChatPanel callId={session.callId} onClose={() => setChatOpen(false)} />
-          </div>
-        )}
+          </Panel>
+        </PanelGroup>
       </div>
-
-      {showInvite && (
-        <InviteModal sessionId={id} onClose={() => setShowInvite(false)} />
-      )}
     </div>
   );
 }
+
+export default SessionPage;
