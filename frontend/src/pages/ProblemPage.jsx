@@ -107,12 +107,11 @@ function ProblemPage() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-base-100 to-base-200 flex flex-col">
+    <div className="app-shell flex h-screen flex-col">
       <Navbar />
 
-      <div className="flex-1 overflow-hidden">
+      <div className="page-wrap flex-1 overflow-hidden py-4">
         <PanelGroup direction="horizontal">
-          {/* left panel- problem desc */}
           <Panel defaultSize={40} minSize={30}>
             <ProblemDescription
               problem={currentProblem}
@@ -122,12 +121,10 @@ function ProblemPage() {
             />
           </Panel>
 
-          <PanelResizeHandle className="w-1 bg-gradient-to-b from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-col-resize shadow-lg" />
+          <PanelResizeHandle className="mx-2 w-1 cursor-col-resize rounded-full bg-[linear-gradient(180deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
-          {/* right panel- code editor & output */}
           <Panel defaultSize={60} minSize={30}>
             <PanelGroup direction="vertical">
-              {/* Top panel - Code editor */}
               <Panel defaultSize={70} minSize={30}>
                 <CodeEditorPanel
                   selectedLanguage={selectedLanguage}
@@ -139,9 +136,8 @@ function ProblemPage() {
                 />
               </Panel>
 
-              <PanelResizeHandle className="h-1 bg-gradient-to-r from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-row-resize shadow-lg" />
+              <PanelResizeHandle className="my-2 h-1 cursor-row-resize rounded-full bg-[linear-gradient(90deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
-              {/* Bottom panel - Output Panel*/}
               <Panel defaultSize={30} minSize={30}>
                 <OutputPanel output={output} />
               </Panel>

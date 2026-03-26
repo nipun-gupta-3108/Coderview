@@ -49,13 +49,12 @@ function DashboardPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-base-200">
+      <div className="app-shell">
         <Navbar />
         <WelcomeSection onCreateSession={() => setShowCreateModal(true)} />
 
-        {/* Grid layout */}
-        <div className="container mx-auto px-6 pb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="page-wrap pb-20">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <StatsCards
               activeSessionsCount={activeSessions.length}
               recentSessionsCount={recentSessions.length}

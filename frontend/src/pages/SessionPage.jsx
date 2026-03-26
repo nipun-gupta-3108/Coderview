@@ -96,10 +96,10 @@ function SessionPage() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-base-100 to-base-200 flex flex-col">
+    <div className="app-shell flex h-screen flex-col">
       <Navbar />
 
-      <div className="flex-1 overflow-hidden">
+      <div className="page-wrap flex-1 overflow-hidden py-4">
         <PanelGroup direction="horizontal">
           {/* LEFT PANEL - CODE EDITOR & PROBLEM DETAILS */}
           <Panel defaultSize={50} minSize={30}>
@@ -246,7 +246,7 @@ function SessionPage() {
                 </div>
               </Panel>
 
-              <PanelResizeHandle className="h-1 bg-gradient-to-r from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-row-resize shadow-lg" />
+              <PanelResizeHandle className="my-2 h-1 cursor-row-resize rounded-full bg-[linear-gradient(90deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
               <Panel defaultSize={50} minSize={20}>
                 <PanelGroup direction="vertical">
@@ -261,7 +261,7 @@ function SessionPage() {
                     />
                   </Panel>
 
-                  <PanelResizeHandle className="h-1 bg-gradient-to-r from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-row-resize shadow-lg" />
+                  <PanelResizeHandle className="my-2 h-1 cursor-row-resize rounded-full bg-[linear-gradient(90deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
                   <Panel defaultSize={30} minSize={15}>
                     <OutputPanel output={output} />
@@ -271,7 +271,7 @@ function SessionPage() {
             </PanelGroup>
           </Panel>
 
-          <PanelResizeHandle className="w-1 bg-gradient-to-b from-primary/20 via-secondary/50 to-accent/20 hover:from-primary hover:via-secondary hover:to-accent transition-all duration-300 cursor-col-resize shadow-lg" />
+          <PanelResizeHandle className="mx-2 w-1 cursor-col-resize rounded-full bg-[linear-gradient(180deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
           {/* RIGHT PANEL - VIDEO CALLS & CHAT */}
           <Panel defaultSize={50} minSize={30}>

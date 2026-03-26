@@ -11,16 +11,16 @@ function CodeEditorPanel({
   onRunCode,
 }) {
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-base-200 to-base-300">
-      <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-base-100 to-base-200 border-b border-base-300/50 shadow-sm">
-        <div className="flex items-center gap-4">
+    <div className="editor-shell flex flex-col">
+      <div className="flex items-center justify-between gap-4 border-b border-slate-700/70 bg-slate-950/70 px-5 py-4">
+        <div className="flex items-center gap-3">
           <img
             src={LANGUAGE_CONFIG[selectedLanguage].icon}
             alt={LANGUAGE_CONFIG[selectedLanguage].name}
-            className="w-6 h-6"
+            className="h-6 w-6"
           />
           <select
-            className="select select-md font-bold border-base-300/60 bg-base-100 hover:border-primary/40"
+            className="select select-sm rounded-full border-slate-700 bg-slate-900 font-semibold text-slate-100"
             value={selectedLanguage}
             onChange={onLanguageChange}
           >
@@ -33,19 +33,19 @@ function CodeEditorPanel({
         </div>
 
         <button
-          className="btn btn-md bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-lg hover:shadow-xl border-none disabled:opacity-50 gap-2"
+          className="action-button rounded-full px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isRunning}
           onClick={onRunCode}
         >
           {isRunning ? (
             <>
-              <Loader2Icon className="w-5 h-5 animate-spin" />
-              <span>Running...</span>
+              <Loader2Icon className="h-4 w-4 animate-spin" />
+              Running...
             </>
           ) : (
             <>
-              <PlayIcon className="w-5 h-5" />
-              <span>Run Code</span>
+              <PlayIcon className="h-4 w-4" />
+              Run Code
             </>
           )}
         </button>
@@ -65,7 +65,7 @@ function CodeEditorPanel({
             automaticLayout: true,
             minimap: { enabled: false },
             padding: { top: 16, bottom: 16 },
-            fontFamily: "'Fira Code', 'Courier New', monospace",
+            fontFamily: "'IBM Plex Mono', monospace",
             lineHeight: 22,
           }}
         />

@@ -15,21 +15,21 @@ function CreateSessionModal({
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box max-w-2xl bg-gradient-to-br from-base-100 to-base-200 border border-base-300/50 shadow-2xl">
-        <h3 className="font-black text-3xl mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-          Create New Session
-        </h3>
+      <div className="modal-box max-w-2xl rounded-[30px] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(244,247,241,0.9))] p-8 shadow-[0_30px_80px_rgba(16,24,40,0.18)]">
+        <div className="mb-8">
+          <p className="mini-label mb-2">new room</p>
+          <h3 className="text-3xl font-bold text-slate-950">Create a Session</h3>
+          <p className="mt-2 text-sm subtle-text">Pick a problem and launch a two-person collaborative room.</p>
+        </div>
 
         <div className="space-y-8">
-          {/* PROBLEM SELECTION */}
           <div className="space-y-3">
-            <label className="label">
-              <span className="label-text font-bold text-base">Select a Problem</span>
-              <span className="label-text-alt text-error font-bold">*</span>
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
+              Select a problem <span className="text-rose-600">*</span>
             </label>
 
             <select
-              className="select w-full font-medium border-base-300/60 bg-base-100 hover:border-primary/40 focus:border-primary"
+              className="select w-full rounded-2xl border-slate-200 bg-white font-medium shadow-sm"
               value={roomConfig.problem}
               onChange={(e) => {
                 const selectedProblem = problems.find((p) => p.title === e.target.value);
@@ -51,18 +51,19 @@ function CreateSessionModal({
             </select>
           </div>
 
-          {/* ROOM SUMMARY */}
           {roomConfig.problem && (
-            <div className="alert alert-success bg-gradient-to-r from-success/20 to-success/10 border border-success/40">
-              <Code2Icon className="w-6 h-6 text-success" />
+            <div className="surface-panel grid-pattern flex items-start gap-4 rounded-[24px] p-5">
+              <div className="icon-chip">
+                <Code2Icon className="h-6 w-6" />
+              </div>
               <div>
-                <p className="font-bold text-base mb-2">Room Summary</p>
-                <div className="space-y-1 text-sm font-medium">
+                <p className="mb-2 text-base font-bold text-slate-950">Room Summary</p>
+                <div className="space-y-1 text-sm subtle-text">
                   <p>
-                    Problem: <span className="font-bold text-success">{roomConfig.problem}</span>
+                    Problem: <span className="font-semibold text-slate-950">{roomConfig.problem}</span>
                   </p>
                   <p>
-                    Max Participants: <span className="font-bold text-success">2 (1-on-1 session)</span>
+                    Max Participants: <span className="font-semibold text-slate-950">2 (1-on-1 session)</span>
                   </p>
                 </div>
               </div>
@@ -70,31 +71,31 @@ function CreateSessionModal({
           )}
         </div>
 
-        <div className="modal-action gap-3 mt-10">
-          <button className="btn btn-outline btn-lg font-bold" onClick={onClose}>
+        <div className="modal-action mt-10 gap-3">
+          <button className="action-button-secondary" onClick={onClose}>
             Cancel
           </button>
 
           <button
-            className="btn btn-lg bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-lg hover:shadow-xl border-none disabled:opacity-50"
+            className="action-button disabled:cursor-not-allowed disabled:opacity-60"
             onClick={onCreateRoom}
             disabled={isCreating || !roomConfig.problem}
           >
             {isCreating ? (
               <>
-                <LoaderIcon className="w-5 h-5 animate-spin" />
-                <span>Creating...</span>
+                <LoaderIcon className="h-5 w-5 animate-spin" />
+                Creating...
               </>
             ) : (
               <>
-                <PlusIcon className="w-5 h-5" />
-                <span>Create</span>
+                <PlusIcon className="h-5 w-5" />
+                Create
               </>
             )}
           </button>
         </div>
       </div>
-      <div className="modal-backdrop bg-black/50" onClick={onClose}></div>
+      <div className="modal-backdrop bg-slate-950/45" onClick={onClose}></div>
     </div>
   );
 }

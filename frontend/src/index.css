@@ -1,111 +1,207 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: all;
+  themes: light --default;
 }
 
-/* Global styles */
+:root {
+  --app-ink: #101828;
+  --app-muted: #5f6c7b;
+  --app-line: rgba(16, 24, 40, 0.08);
+  --app-glow: rgba(17, 163, 103, 0.18);
+}
+
 @layer base {
-  /* Typography improvements */
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-gradient-to-br from-base-100 via-base-100 to-base-200;
+    min-height: 100vh;
+    color: var(--app-ink);
+    font-family: "Space Grotesk", sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 30%),
+      radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 28%),
+      linear-gradient(180deg, #fffdf7 0%, #f6f7f1 42%, #eef2ea 100%);
   }
 
-  /* Smooth transitions for all interactive elements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Space Grotesk", sans-serif;
+    letter-spacing: -0.04em;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: "IBM Plex Mono", monospace;
+  }
+
   button:not(:disabled),
-  [role="button"]:not(:disabled),
-  a {
-    cursor: pointer;
+  a,
+  [role="button"]:not(:disabled) {
     @apply transition-all duration-200 ease-out;
   }
 
-  /* Better focus states */
   button:focus-visible,
-  a:focus-visible {
-    @apply outline-offset-2 outline-2 outline-primary;
+  a:focus-visible,
+  select:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-emerald-500;
   }
 }
 
-/* Custom utility layers */
 @layer components {
-  /* Premium card styling */
+  .app-shell {
+    @apply min-h-screen;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255, 199, 93, 0.2), transparent 22%),
+      radial-gradient(circle at 88% 10%, rgba(55, 174, 226, 0.18), transparent 24%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(241, 245, 239, 0.96));
+  }
+
+  .page-wrap {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .surface-panel {
+    @apply rounded-[28px] border shadow-[0_20px_60px_rgba(16,24,40,0.08)];
+    border-color: var(--app-line);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(18px);
+  }
+
+  .surface-panel-strong {
+    @apply rounded-[28px] border shadow-[0_24px_70px_rgba(16,24,40,0.12)];
+    border-color: rgba(16, 24, 40, 0.1);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 247, 242, 0.88));
+    backdrop-filter: blur(22px);
+  }
+
+  .surface-dark {
+    @apply rounded-[28px] border text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)];
+    border-color: rgba(148, 163, 184, 0.16);
+    background:
+      radial-gradient(circle at top, rgba(14, 165, 233, 0.12), transparent 26%),
+      linear-gradient(180deg, #15212f 0%, #0f1723 100%);
+  }
+
+  .hero-orb {
+    @apply absolute rounded-full blur-3xl pointer-events-none;
+  }
+
+  .section-kicker {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em];
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(16, 24, 40, 0.08);
+    color: #116149;
+  }
+
+  .headline-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #14532d 0%, #0f766e 45%, #0ea5e9 100%);
+  }
+
+  .subtle-text {
+    color: var(--app-muted);
+  }
+
+  .nav-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold;
+  }
+
+  .nav-pill-active {
+    @apply text-white shadow-lg;
+    background: linear-gradient(135deg, #14532d 0%, #0f766e 100%);
+  }
+
+  .nav-pill-idle {
+    @apply text-slate-600 hover:text-slate-900;
+    background: rgba(255, 255, 255, 0.68);
+  }
+
+  .metric-card {
+    @apply surface-panel p-6;
+  }
+
+  .feature-card {
+    @apply surface-panel-strong p-7;
+  }
+
   .card-premium {
-    @apply bg-gradient-to-br from-base-100 to-base-200 border border-base-300/50 shadow-xl hover:shadow-2xl transition-all duration-300;
+    @apply surface-panel-strong;
   }
 
   .card-premium-dark {
-    @apply bg-gradient-to-br from-base-200 to-base-300 border border-base-300/30 shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply surface-panel;
   }
 
-  /* Enhanced button styles */
-  .btn-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
+  .mini-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.22em];
+    color: var(--app-muted);
   }
 
-  .btn-gradient-secondary {
-    @apply bg-gradient-to-r from-secondary to-accent text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200;
+  .action-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-semibold text-white shadow-[0_14px_30px_rgba(17,163,103,0.28)];
+    background: linear-gradient(135deg, #166534 0%, #0f766e 48%, #0284c7 100%);
   }
 
-  /* Glass morphism effect */
-  .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  .action-button-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-semibold text-slate-900;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid rgba(16, 24, 40, 0.1);
   }
 
-  .glass-dark {
-    @apply bg-black/20 backdrop-blur-md border border-white/10;
+  .icon-chip {
+    @apply flex h-12 w-12 items-center justify-center rounded-2xl;
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.12), rgba(14, 165, 233, 0.12));
+    color: #166534;
   }
 
-  /* Badge enhancements */
-  .badge-enhanced {
-    @apply font-semibold shadow-md px-3 py-1.5 rounded-full;
-  }
-
-  /* Icon with background */
-  .icon-box-primary {
-    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300 bg-gradient-to-br from-primary/20 to-primary/10 text-primary hover:from-primary/30 hover:to-primary/20;
-  }
-
-  .icon-box-secondary {
-    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300 bg-gradient-to-br from-secondary/20 to-secondary/10 text-secondary hover:from-secondary/30 hover:to-secondary/20;
-  }
-
+  .icon-box-primary,
+  .icon-box-secondary,
   .icon-box-accent {
-    @apply flex items-center justify-center rounded-2xl p-3 transition-all duration-300 bg-gradient-to-br from-accent/20 to-accent/10 text-accent hover:from-accent/30 hover:to-accent/20;
+    @apply icon-chip;
   }
 
-  /* Animated gradient underline */
-  .nav-link-active {
-    @apply relative;
+  .status-chip {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em];
   }
 
-  .nav-link-active::after {
-    content: '';
-    @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary rounded-full;
+  .editor-shell {
+    @apply h-full overflow-hidden rounded-[28px] border;
+    border-color: rgba(148, 163, 184, 0.18);
+    background: linear-gradient(180deg, rgba(13, 18, 28, 0.98), rgba(15, 23, 42, 0.98));
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.3);
   }
 
-  /* Status indicators */
-  .status-dot-active {
-    @apply w-2 h-2 rounded-full animate-pulse bg-success;
+  .grid-pattern {
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    background-size: 34px 34px;
   }
 
-  /* Smooth scrollbar */
   .scrollbar-smooth {
     scrollbar-width: thin;
-    scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+    scrollbar-color: rgba(71, 85, 105, 0.35) transparent;
   }
 
   .scrollbar-smooth::-webkit-scrollbar {
-    @apply w-2;
-  }
-
-  .scrollbar-smooth::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    width: 10px;
+    height: 10px;
   }
 
   .scrollbar-smooth::-webkit-scrollbar-thumb {
-    @apply bg-base-300 rounded-full hover:bg-base-300;
+    background: rgba(71, 85, 105, 0.35);
+    border-radius: 999px;
+  }
+
+  .scrollbar-smooth::-webkit-scrollbar-track {
+    background: transparent;
   }
 }

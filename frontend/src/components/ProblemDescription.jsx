@@ -1,24 +1,21 @@
 import { getDifficultyBadgeClass } from "../lib/utils";
+
 function ProblemDescription({ problem, currentProblemId, onProblemChange, allProblems }) {
   return (
-    <div className="h-full overflow-y-auto scrollbar-smooth bg-gradient-to-br from-base-100 to-base-200">
-      {/* HEADER SECTION */}
-      <div className="p-6 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b border-base-300/50 sticky top-0 z-10">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <h1 className="text-4xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            {problem.title}
-          </h1>
-          <span className={`badge badge-lg font-bold flex-shrink-0 ${getDifficultyBadgeClass(problem.difficulty)}`}>
+    <div className="scrollbar-smooth h-full overflow-y-auto">
+      <div className="surface-panel-strong sticky top-0 z-10 rounded-b-[28px] rounded-t-none border-x-0 border-t-0 px-6 py-6">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <h1 className="max-w-xl text-4xl font-bold text-slate-950">{problem.title}</h1>
+          <span className={`badge badge-lg shrink-0 font-semibold ${getDifficultyBadgeClass(problem.difficulty)}`}>
             {problem.difficulty}
           </span>
         </div>
-        <p className="text-base font-semibold text-base-content/70 mb-5">{problem.category}</p>
+        <p className="mb-5 text-base subtle-text">{problem.category}</p>
 
-        {/* Problem selector */}
         <div>
-          <label className="text-sm font-bold text-base-content/60 block mb-2">Switch Problem</label>
+          <label className="mini-label mb-2 block">switch problem</label>
           <select
-            className="select select-md w-full font-medium border-base-300/60 bg-base-100 hover:border-primary/40"
+            className="select select-md w-full rounded-2xl border-slate-200 bg-white font-medium shadow-sm"
             value={currentProblemId}
             onChange={(e) => onProblemChange(e.target.value)}
           >
@@ -31,81 +28,60 @@ function ProblemDescription({ problem, currentProblemId, onProblemChange, allPro
         </div>
       </div>
 
-      <div className="p-6 space-y-6">
-        {/* PROBLEM DESC */}
-        <div className="card-premium border-primary/30">
-          <div className="card-body">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
-              Description
-            </h2>
-
-            <div className="space-y-4 text-base leading-relaxed">
-              <p className="text-base-content/90 font-medium">{problem.description.text}</p>
-              {problem.description.notes.map((note, idx) => (
-                <p key={idx} className="text-base-content/90 font-medium">
-                  {note}
-                </p>
-              ))}
-            </div>
+      <div className="space-y-6 p-6">
+        <div className="surface-panel p-6">
+          <h2 className="mb-4 text-2xl font-bold text-slate-950">Description</h2>
+          <div className="space-y-4 text-base leading-relaxed">
+            <p className="text-slate-800">{problem.description.text}</p>
+            {problem.description.notes.map((note, idx) => (
+              <p key={idx} className="text-slate-700">
+                {note}
+              </p>
+            ))}
           </div>
         </div>
 
-        {/* EXAMPLES SECTION */}
-        <div className="card-premium border-secondary/30">
-          <div className="card-body">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent mb-6">
-              Examples
-            </h2>
-            <div className="space-y-6">
-              {problem.examples.map((example, idx) => (
-                <div key={idx} className="bg-base-100/50 rounded-2xl p-5 border border-base-300/40 hover:border-secondary/50 transition-all">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="badge badge-md bg-gradient-to-r from-secondary to-accent text-white font-bold">
-                      {idx + 1}
-                    </span>
-                    <p className="font-bold text-lg text-base-content">Example {idx + 1}</p>
-                  </div>
-                  <div className="bg-slate-900 rounded-xl p-5 font-mono text-sm space-y-2 border border-base-300/30">
-                    <div className="flex gap-3">
-                      <span className="text-info font-bold min-w-[70px]">Input:</span>
-                      <span className="text-slate-300">{example.input}</span>
-                    </div>
-                    <div className="flex gap-3">
-                      <span className="text-success font-bold min-w-[70px]">Output:</span>
-                      <span className="text-slate-300">{example.output}</span>
-                    </div>
-                    {example.explanation && (
-                      <div className="pt-3 border-t border-slate-700 mt-2">
-                        <span className="text-slate-400 font-sans text-xs block">
-                          <span className="font-semibold text-slate-300">Explanation: </span>
-                          {example.explanation}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+        <div className="surface-panel p-6">
+          <h2 className="mb-6 text-2xl font-bold text-slate-950">Examples</h2>
+          <div className="space-y-6">
+            {problem.examples.map((example, idx) => (
+              <div key={idx} className="rounded-[24px] border border-slate-200 bg-white/70 p-5">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="status-chip bg-sky-100 text-sky-700">{`example ${idx + 1}`}</span>
                 </div>
-              ))}
-            </div>
+                <div className="surface-dark space-y-3 p-5 text-sm">
+                  <div className="flex gap-3">
+                    <span className="min-w-[70px] font-semibold text-sky-300">Input:</span>
+                    <span className="text-slate-200">{example.input}</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="min-w-[70px] font-semibold text-emerald-300">Output:</span>
+                    <span className="text-slate-200">{example.output}</span>
+                  </div>
+                  {example.explanation && (
+                    <div className="mt-2 border-t border-slate-700 pt-3 text-xs text-slate-400">
+                      <span className="font-semibold text-slate-300">Explanation: </span>
+                      {example.explanation}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* CONSTRAINTS */}
-        <div className="card-premium border-accent/30">
-          <div className="card-body">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent mb-4">
-              Constraints
-            </h2>
-            <ul className="space-y-3">
-              {problem.constraints.map((constraint, idx) => (
-                <li key={idx} className="flex gap-3 items-start">
-                  <span className="text-accent font-bold text-lg mt-0.5">â€¢</span>
-                  <code className="text-sm font-semibold text-base-content/80 bg-base-200/50 px-3 py-1 rounded-lg">
-                    {constraint}
-                  </code>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="surface-panel p-6">
+          <h2 className="mb-4 text-2xl font-bold text-slate-950">Constraints</h2>
+          <ul className="space-y-3">
+            {problem.constraints.map((constraint, idx) => (
+              <li key={idx} className="flex items-start gap-3">
+                <span className="mt-0.5 text-lg text-emerald-700">•</span>
+                <code className="rounded-xl bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                  {constraint}
+                </code>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
