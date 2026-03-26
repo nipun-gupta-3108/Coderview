@@ -125,19 +125,31 @@
   }
 
   .metric-card {
-    @apply surface-panel p-6;
+    @apply rounded-[28px] border p-6 shadow-[0_20px_60px_rgba(16,24,40,0.08)];
+    border-color: var(--app-line);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(18px);
   }
 
   .feature-card {
-    @apply surface-panel-strong p-7;
+    @apply rounded-[28px] border p-7 shadow-[0_24px_70px_rgba(16,24,40,0.12)];
+    border-color: rgba(16, 24, 40, 0.1);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 247, 242, 0.88));
+    backdrop-filter: blur(22px);
   }
 
   .card-premium {
-    @apply surface-panel-strong;
+    @apply rounded-[28px] border shadow-[0_24px_70px_rgba(16,24,40,0.12)];
+    border-color: rgba(16, 24, 40, 0.1);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 247, 242, 0.88));
+    backdrop-filter: blur(22px);
   }
 
   .card-premium-dark {
-    @apply surface-panel;
+    @apply rounded-[28px] border shadow-[0_20px_60px_rgba(16,24,40,0.08)];
+    border-color: var(--app-line);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(18px);
   }
 
   .mini-label {
@@ -165,7 +177,9 @@
   .icon-box-primary,
   .icon-box-secondary,
   .icon-box-accent {
-    @apply icon-chip;
+    @apply flex h-12 w-12 items-center justify-center rounded-2xl;
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.12), rgba(14, 165, 233, 0.12));
+    color: #166534;
   }
 
   .status-chip {
