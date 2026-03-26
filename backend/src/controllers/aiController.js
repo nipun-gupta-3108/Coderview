@@ -1,4 +1,4 @@
-import { openai } from "../lib/openai.js";
+import { createAICompletion } from "../lib/openai.js";
 import { ENV } from "../lib/env.js";
 
 function formatExamples(examples = []) {
@@ -86,25 +86,20 @@ export async function getHint(req, res) {
       });
     }
 
-    if (!ENV.OPENAI_API_KEY) {
+    if (!ENV.OPENROUTER_API_KEY) {
       return res.status(500).json({
         success: false,
-        error: "OPENAI_API_KEY is missing",
+        error: "OPENROUTER_API_KEY is missing",
       });
     }
 
     const safeHintLevel = Math.min(Math.max(Number(hintLevel) || 1, 1), 3);
     const truncatedCode = String(code).slice(0, 6000);
 
-    const response = await openai.responses.create({
-      model: ENV.OPENAI_MODEL,
-      input: [
-        {
-          role: "developer",
-          content: [
-            {
-              type: "input_text",
-              text: `You are a DSA interview hint assistant.
+    const hint = await createAICompletion([
+      {
+        role: "system",
+        content: `You are a DSA interview hint assistant.
 
 Rules:
 - Help the user think. Do not solve the full problem.
@@ -117,15 +112,10 @@ Rules:
 - End with one short nudge question when useful.
 
 ${getHintLevelInstruction(safeHintLevel)}`,
-            },
-          ],
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "input_text",
-              text: `Problem Title: ${title}
+      },
+      {
+        role: "user",
+        content: `Problem Title: ${title}
 
 Description:
 ${description}
@@ -144,13 +134,8 @@ ${truncatedCode || "User has not written code yet."}
 
 Hint Level:
 ${safeHintLevel}`,
-            },
-          ],
-        },
-      ],
-    });
-
-    const hint = response.output_text?.trim();
+      },
+    ]);
 
     if (!hint) {
       return res.status(500).json({
@@ -191,24 +176,19 @@ export async function reviewCode(req, res) {
       });
     }
 
-    if (!ENV.OPENAI_API_KEY) {
+    if (!ENV.OPENROUTER_API_KEY) {
       return res.status(500).json({
         success: false,
-        error: "OPENAI_API_KEY is missing",
+        error: "OPENROUTER_API_KEY is missing",
       });
     }
 
     const truncatedCode = String(code).slice(0, 7000);
 
-    const response = await openai.responses.create({
-      model: ENV.OPENAI_MODEL,
-      input: [
-        {
-          role: "developer",
-          content: [
-            {
-              type: "input_text",
-              text: `You are a DSA code review assistant.
+    const review = await createAICompletion([
+      {
+        role: "system",
+        content: `You are a DSA code review assistant.
 
 Rules:
 - Review the user's current solution for correctness, likely bugs, edge cases, and complexity.
@@ -221,29 +201,19 @@ Bug Risk:
 Complexity:
 Next Step:
 - Each section should be 1 to 3 short lines.`,
-            },
-          ],
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "input_text",
-              text: getReviewPrompt({
-                title,
-                description,
-                examples,
-                constraints,
-                language,
-                code: truncatedCode,
-              }),
-            },
-          ],
-        },
-      ],
-    });
-
-    const review = response.output_text?.trim();
+      },
+      {
+        role: "user",
+        content: getReviewPrompt({
+          title,
+          description,
+          examples,
+          constraints,
+          language,
+          code: truncatedCode,
+        }),
+      },
+    ]);
 
     if (!review) {
       return res.status(500).json({
@@ -276,22 +246,17 @@ export async function explainProblem(req, res) {
       });
     }
 
-    if (!ENV.OPENAI_API_KEY) {
+    if (!ENV.OPENROUTER_API_KEY) {
       return res.status(500).json({
         success: false,
-        error: "OPENAI_API_KEY is missing",
+        error: "OPENROUTER_API_KEY is missing",
       });
     }
 
-    const response = await openai.responses.create({
-      model: ENV.OPENAI_MODEL,
-      input: [
-        {
-          role: "developer",
-          content: [
-            {
-              type: "input_text",
-              text: `You are a DSA problem explainer.
+    const explanation = await createAICompletion([
+      {
+        role: "system",
+        content: `You are a DSA problem explainer.
 
 Rules:
 - Explain the problem in beginner-friendly language.
@@ -304,22 +269,12 @@ Key Constraint:
 What To Watch:
 First Move:
 - Each section should be 1 to 3 short lines.`,
-            },
-          ],
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "input_text",
-              text: getExplainPrompt({ title, description, examples, constraints }),
-            },
-          ],
-        },
-      ],
-    });
-
-    const explanation = response.output_text?.trim();
+      },
+      {
+        role: "user",
+        content: getExplainPrompt({ title, description, examples, constraints }),
+      },
+    ]);
 
     if (!explanation) {
       return res.status(500).json({

@@ -12,6 +12,6 @@ export const ENV = {
   STREAM_API_KEY: process.env.STREAM_API_KEY,
   STREAM_API_SECRET: process.env.STREAM_API_SECRET,
   ONECOMPILER_API_KEY: process.env.ONECOMPILER_API_KEY,
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-  OPENAI_MODEL: process.env.OPENAI_MODEL || "gpt-5-mini",
+  OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+  AI_MODEL: process.env.AI_MODEL || "openrouter/free",
 };
