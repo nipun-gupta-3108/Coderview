@@ -193,6 +193,32 @@
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.3);
   }
 
+  .ai-panel-body {
+    @apply rounded-2xl border bg-white/80 p-4;
+    border-color: rgba(148, 163, 184, 0.22);
+  }
+
+  .ai-section {
+    @apply rounded-2xl border bg-white/70 p-4;
+    border-color: rgba(148, 163, 184, 0.18);
+  }
+
+  .ai-section-title {
+    @apply mb-2 text-xs font-semibold uppercase tracking-[0.2em];
+  }
+
+  .ai-section-title-emerald {
+    color: #047857;
+  }
+
+  .ai-section-title-sky {
+    color: #0369a1;
+  }
+
+  .ai-section-title-amber {
+    color: #b45309;
+  }
+
   .grid-pattern {
     background-image:
       linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),

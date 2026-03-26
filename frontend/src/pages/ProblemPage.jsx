@@ -7,7 +7,9 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import ProblemDescription from "../components/ProblemDescription";
 import OutputPanel from "../components/OutputPanel";
 import CodeEditorPanel from "../components/CodeEditorPanel";
+import AIInsightCard from "../components/AIInsightCard";
 import { executeCode } from "../lib/OneCompiler";
+import { explainAiProblem, getAiHint, reviewAiCode } from "../lib/ai";
 
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
@@ -21,6 +23,13 @@ function ProblemPage() {
   const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [aiHint, setAiHint] = useState("");
+  const [hintLevel, setHintLevel] = useState(0);
+  const [isGettingHint, setIsGettingHint] = useState(false);
+  const [aiReview, setAiReview] = useState("");
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [aiExplanation, setAiExplanation] = useState("");
+  const [isExplaining, setIsExplaining] = useState(false);
 
   const currentProblem = PROBLEMS[currentProblemId];
 
@@ -30,6 +39,10 @@ function ProblemPage() {
       setCurrentProblemId(id);
       setCode(PROBLEMS[id].starterCode[selectedLanguage]);
       setOutput(null);
+      setAiHint("");
+      setHintLevel(0);
+      setAiReview("");
+      setAiExplanation("");
     }
   }, [id, selectedLanguage]);
 
@@ -38,6 +51,10 @@ function ProblemPage() {
     setSelectedLanguage(newLang);
     setCode(currentProblem.starterCode[newLang]);
     setOutput(null);
+    setAiHint("");
+    setHintLevel(0);
+    setAiReview("");
+    setAiExplanation("");
   };
 
   const handleProblemChange = (newProblemId) => navigate(`/problem/${newProblemId}`);
@@ -106,6 +123,77 @@ function ProblemPage() {
     }
   };
 
+  const handleGetHint = async () => {
+    const nextHintLevel = Math.min(hintLevel + 1, 3);
+
+    setIsGettingHint(true);
+
+    const result = await getAiHint({
+      title: currentProblem.title,
+      description: currentProblem.description.text,
+      examples: currentProblem.examples,
+      constraints: currentProblem.constraints,
+      language: selectedLanguage,
+      code,
+      hintLevel: nextHintLevel,
+    });
+
+    setIsGettingHint(false);
+
+    if (result.success) {
+      setAiHint(result.hint);
+      setHintLevel(result.hintLevel);
+      toast.success(`Hint ${result.hintLevel} ready`);
+      return;
+    }
+
+    toast.error(result.error || "Failed to get hint");
+  };
+
+  const handleReviewCode = async () => {
+    setIsReviewing(true);
+
+    const result = await reviewAiCode({
+      title: currentProblem.title,
+      description: currentProblem.description.text,
+      examples: currentProblem.examples,
+      constraints: currentProblem.constraints,
+      language: selectedLanguage,
+      code,
+    });
+
+    setIsReviewing(false);
+
+    if (result.success) {
+      setAiReview(result.review);
+      toast.success("AI review ready");
+      return;
+    }
+
+    toast.error(result.error || "Failed to review code");
+  };
+
+  const handleExplainProblem = async () => {
+    setIsExplaining(true);
+
+    const result = await explainAiProblem({
+      title: currentProblem.title,
+      description: currentProblem.description.text,
+      examples: currentProblem.examples,
+      constraints: currentProblem.constraints,
+    });
+
+    setIsExplaining(false);
+
+    if (result.success) {
+      setAiExplanation(result.explanation);
+      toast.success("AI explanation ready");
+      return;
+    }
+
+    toast.error(result.error || "Failed to explain problem");
+  };
+
   return (
     <div className="app-shell flex h-screen flex-col">
       <Navbar />
@@ -139,7 +227,98 @@ function ProblemPage() {
               <PanelResizeHandle className="my-2 h-1 cursor-row-resize rounded-full bg-[linear-gradient(90deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
               <Panel defaultSize={30} minSize={30}>
-                <OutputPanel output={output} />
+                <div className="flex h-full flex-col gap-4">
+                  <div className="surface-panel p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-950">AI Hint</h3>
+                        <p className="text-sm subtle-text">
+                          AI tumhe guide karega, full solution nahi dega.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleGetHint}
+                        disabled={isGettingHint || hintLevel >= 3}
+                        className="btn btn-primary rounded-2xl"
+                      >
+                        {isGettingHint
+                          ? "Thinking..."
+                          : hintLevel === 0
+                            ? "Get Hint"
+                            : hintLevel < 3
+                              ? "Next Hint"
+                              : "Max Hints Used"}
+                      </button>
+                    </div>
+
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      Hint Level {hintLevel || 1}/3
+                    </p>
+                    <AIInsightCard
+                      content={aiHint}
+                      emptyText="Stuck ho? Get Hint dabao aur next nudge le lo."
+                      accent="emerald"
+                    />
+                  </div>
+
+                  <div className="surface-panel p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-950">AI Code Review</h3>
+                        <p className="text-sm subtle-text">
+                          Current solution ka quick feedback aur bug-risk analysis.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleReviewCode}
+                        disabled={isReviewing}
+                        className="btn btn-outline rounded-2xl border-slate-300 bg-white"
+                      >
+                        {isReviewing ? "Reviewing..." : "Review Code"}
+                      </button>
+                    </div>
+
+                    <AIInsightCard
+                      content={aiReview}
+                      emptyText="Code likhne ke baad Review Code dabao aur AI se focused feedback lo."
+                      accent="sky"
+                    />
+                  </div>
+
+                  <div className="surface-panel p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-950">AI Explain Problem</h3>
+                        <p className="text-sm subtle-text">
+                          Problem ko simple language me break down karwa lo.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleExplainProblem}
+                        disabled={isExplaining}
+                        className="btn btn-outline rounded-2xl border-slate-300 bg-white"
+                      >
+                        {isExplaining ? "Explaining..." : "Explain Problem"}
+                      </button>
+                    </div>
+
+                    <AIInsightCard
+                      content={aiExplanation}
+                      emptyText="Problem heavy lag raha ho to Explain Problem use karo."
+                      accent="amber"
+                    />
+                  </div>
+
+                  <div className="min-h-0 flex-1">
+                    <OutputPanel output={output} />
+                  </div>
+                </div>
               </Panel>
             </PanelGroup>
           </Panel>
