@@ -235,7 +235,7 @@ function ProblemPage() {
                           <div>
                             <h3 className="text-lg font-bold text-slate-950">AI Hint</h3>
                             <p className="text-sm subtle-text">
-                              AI tumhe guide karega, full solution nahi dega.
+                              Get guided hints without giving away the full solution.
                             </p>
                           </div>
 
@@ -260,7 +260,7 @@ function ProblemPage() {
                         </p>
                         <AIInsightCard
                           content={aiHint}
-                          emptyText="Stuck ho? Get Hint dabao aur next nudge le lo."
+                          emptyText="Stuck? Click 'Get Hint' to receive the next nudge to help you solve it."
                           accent="emerald"
                         />
                       </div>
@@ -270,7 +270,7 @@ function ProblemPage() {
                           <div>
                             <h3 className="text-lg font-bold text-slate-950">AI Code Review</h3>
                             <p className="text-sm subtle-text">
-                              Current solution ka quick feedback aur bug-risk analysis.
+                              Get quick feedback and risk analysis for your current solution.
                             </p>
                           </div>
 
@@ -286,7 +286,7 @@ function ProblemPage() {
 
                         <AIInsightCard
                           content={aiReview}
-                          emptyText="Code likhne ke baad Review Code dabao aur AI se focused feedback lo."
+                          emptyText="Write some code and click 'Review Code' to get focused AI feedback."
                           accent="sky"
                         />
                       </div>
@@ -296,7 +296,7 @@ function ProblemPage() {
                           <div>
                             <h3 className="text-lg font-bold text-slate-950">AI Explain Problem</h3>
                             <p className="text-sm subtle-text">
-                              Problem ko simple language me break down karwa lo.
+                              Get a simple breakdown of the problem in easy-to-understand language.
                             </p>
                           </div>
 
@@ -312,7 +312,7 @@ function ProblemPage() {
 
                         <AIInsightCard
                           content={aiExplanation}
-                          emptyText="Problem heavy lag raha ho to Explain Problem use karo."
+                          emptyText="If the problem seems complex, click 'Explain Problem' for a simpler breakdown."
                           accent="amber"
                         />
                       </div>

@@ -200,7 +200,7 @@ function SessionPage() {
                         <div>
                           <p className="mini-label mb-2">live session</p>
                           <p className="text-sm subtle-text">
-                            Host: {session?.host?.name || "Loading..."} • {session?.participant ? 2 : 1}/2 participants
+                            Host: {session?.host?.name || "Loading..."} ï¿½ {session?.participant ? 2 : 1}/2 participants
                           </p>
                         </div>
 
@@ -266,98 +266,102 @@ function SessionPage() {
                   <PanelResizeHandle className="my-2 h-1 cursor-row-resize rounded-full bg-[linear-gradient(90deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
                   <Panel defaultSize={30} minSize={15}>
-                    <div className="flex h-full flex-col gap-4">
-                      <div className="surface-panel p-4">
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <div>
-                            <h3 className="text-lg font-bold text-slate-950">AI Hint</h3>
-                            <p className="text-sm subtle-text">
-                              Session ke beech progressive hints lo.
+                    <div className="flex h-full flex-col gap-4 overflow-hidden">
+                      <div className="overflow-y-auto scrollbar-smooth flex-1">
+                        <div className="space-y-4 pr-2">
+                          <div className="surface-panel p-4">
+                            <div className="mb-3 flex items-center justify-between gap-3">
+                              <div>
+                                <h3 className="text-lg font-bold text-slate-950">AI Hint</h3>
+                                <p className="text-sm subtle-text">
+                                  Get progressive hints throughout your session.
+                                </p>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={handleGetHint}
+                                disabled={isGettingHint || hintLevel >= 3 || !problemData}
+                                className="btn btn-primary rounded-2xl"
+                              >
+                                {isGettingHint
+                                  ? "Thinking..."
+                                  : hintLevel === 0
+                                    ? "Get Hint"
+                                    : hintLevel < 3
+                                      ? "Next Hint"
+                                      : "Max Hints Used"}
+                              </button>
+                            </div>
+
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                              Hint Level {hintLevel || 1}/3
                             </p>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={handleGetHint}
-                            disabled={isGettingHint || hintLevel >= 3 || !problemData}
-                            className="btn btn-primary rounded-2xl"
-                          >
-                            {isGettingHint
-                              ? "Thinking..."
-                              : hintLevel === 0
-                                ? "Get Hint"
-                                : hintLevel < 3
-                                  ? "Next Hint"
-                                  : "Max Hints Used"}
-                          </button>
-                        </div>
-
-                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                          Hint Level {hintLevel || 1}/3
-                        </p>
-                        <AIInsightCard
-                          content={aiHint}
-                          emptyText="Need a nudge? Get Hint dabao aur session flow break kiye bina guidance lo."
-                          accent="emerald"
-                        />
+                            <AIInsightCard
+                              content={aiHint}
+                              emptyText="Need a nudge? Click 'Get Hint' to receive guidance without breaking your session flow."
+                              accent="emerald"
+                            />
                       </div>
 
-                      <div className="surface-panel p-4">
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <div>
-                            <h3 className="text-lg font-bold text-slate-950">AI Code Review</h3>
-                            <p className="text-sm subtle-text">
-                              Current approach ki correctness aur bug-risk check karo.
-                            </p>
-                          </div>
+                          <div className="surface-panel p-4">
+                            <div className="mb-3 flex items-center justify-between gap-3">
+                              <div>
+                                <h3 className="text-lg font-bold text-slate-950">AI Code Review</h3>
+                                <p className="text-sm subtle-text">
+                                  Check your approach for correctness and potential bugs.
+                                </p>
+                              </div>
 
-                          <button
-                            type="button"
-                            onClick={handleReviewCode}
-                            disabled={isReviewing || !problemData}
-                            className="btn btn-outline rounded-2xl border-slate-300 bg-white"
-                          >
-                            {isReviewing ? "Reviewing..." : "Review Code"}
-                          </button>
-                        </div>
+                              <button
+                                type="button"
+                                onClick={handleReviewCode}
+                                disabled={isReviewing || !problemData}
+                                className="btn btn-outline rounded-2xl border-slate-300 bg-white"
+                              >
+                                {isReviewing ? "Reviewing..." : "Review Code"}
+                              </button>
+                            </div>
 
-                        <AIInsightCard
-                          content={aiReview}
-                          emptyText="Current code ka focused feedback chahiye ho to Review Code use karo."
-                          accent="sky"
-                        />
+                            <AIInsightCard
+                              content={aiReview}
+                              emptyText="Need feedback on your code? Click 'Review Code' for focused AI insights."
+                              accent="sky"
+                            />
                       </div>
 
-                      <div className="surface-panel p-4">
-                        <div className="mb-3 flex items-center justify-between gap-3">
-                          <div>
-                            <h3 className="text-lg font-bold text-slate-950">AI Explain Problem</h3>
-                            <p className="text-sm subtle-text">
-                              Session start me problem ko quickly simplify kar lo.
-                            </p>
+                          <div className="surface-panel p-4">
+                            <div className="mb-3 flex items-center justify-between gap-3">
+                              <div>
+                                <h3 className="text-lg font-bold text-slate-950">AI Explain Problem</h3>
+                                <p className="text-sm subtle-text">
+                                  Get a quick and simple breakdown of the problem.
+                                </p>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={handleExplainProblem}
+                                disabled={isExplaining || !problemData}
+                                className="btn btn-outline rounded-2xl border-slate-300 bg-white"
+                              >
+                                {isExplaining ? "Explaining..." : "Explain Problem"}
+                              </button>
+                            </div>
+
+                            <AIInsightCard
+                              content={aiExplanation}
+                              emptyText="Need a quick breakdown? Click 'Explain Problem' for a simpler understanding."
+                              accent="amber"
+                            />
                           </div>
-
-                          <button
-                            type="button"
-                            onClick={handleExplainProblem}
-                            disabled={isExplaining || !problemData}
-                            className="btn btn-outline rounded-2xl border-slate-300 bg-white"
-                          >
-                            {isExplaining ? "Explaining..." : "Explain Problem"}
-                          </button>
                         </div>
-
-                        <AIInsightCard
-                          content={aiExplanation}
-                          emptyText="Problem ko fast simplify karna ho to Explain Problem use karo."
-                          accent="amber"
-                        />
+                      </div>
                       </div>
 
                       <div className="min-h-0 flex-1">
                         <OutputPanel output={output} />
                       </div>
-                    </div>
                   </Panel>
                 </PanelGroup>
               </Panel>
