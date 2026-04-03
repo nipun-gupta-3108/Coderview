@@ -227,92 +227,96 @@ function ProblemPage() {
               <PanelResizeHandle className="my-2 h-1 cursor-row-resize rounded-full bg-[linear-gradient(90deg,rgba(20,83,45,0.16),rgba(14,165,233,0.5),rgba(245,158,11,0.18))]" />
 
               <Panel defaultSize={30} minSize={30}>
-                <div className="flex h-full flex-col gap-4">
-                  <div className="surface-panel p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-950">AI Hint</h3>
-                        <p className="text-sm subtle-text">
-                          AI tumhe guide karega, full solution nahi dega.
+                <div className="flex h-full flex-col gap-4 overflow-hidden">
+                  <div className="overflow-y-auto scrollbar-smooth flex-1">
+                    <div className="space-y-4 pr-2">
+                      <div className="surface-panel p-4">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <div>
+                            <h3 className="text-lg font-bold text-slate-950">AI Hint</h3>
+                            <p className="text-sm subtle-text">
+                              AI tumhe guide karega, full solution nahi dega.
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleGetHint}
+                            disabled={isGettingHint || hintLevel >= 3}
+                            className="btn btn-primary rounded-2xl"
+                          >
+                            {isGettingHint
+                              ? "Thinking..."
+                              : hintLevel === 0
+                                ? "Get Hint"
+                                : hintLevel < 3
+                                  ? "Next Hint"
+                                  : "Max Hints Used"}
+                          </button>
+                        </div>
+
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                          Hint Level {hintLevel || 1}/3
                         </p>
+                        <AIInsightCard
+                          content={aiHint}
+                          emptyText="Stuck ho? Get Hint dabao aur next nudge le lo."
+                          accent="emerald"
+                        />
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={handleGetHint}
-                        disabled={isGettingHint || hintLevel >= 3}
-                        className="btn btn-primary rounded-2xl"
-                      >
-                        {isGettingHint
-                          ? "Thinking..."
-                          : hintLevel === 0
-                            ? "Get Hint"
-                            : hintLevel < 3
-                              ? "Next Hint"
-                              : "Max Hints Used"}
-                      </button>
-                    </div>
+                      <div className="surface-panel p-4">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <div>
+                            <h3 className="text-lg font-bold text-slate-950">AI Code Review</h3>
+                            <p className="text-sm subtle-text">
+                              Current solution ka quick feedback aur bug-risk analysis.
+                            </p>
+                          </div>
 
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      Hint Level {hintLevel || 1}/3
-                    </p>
-                    <AIInsightCard
-                      content={aiHint}
-                      emptyText="Stuck ho? Get Hint dabao aur next nudge le lo."
-                      accent="emerald"
-                    />
-                  </div>
+                          <button
+                            type="button"
+                            onClick={handleReviewCode}
+                            disabled={isReviewing}
+                            className="btn btn-outline rounded-2xl border-slate-300 bg-white"
+                          >
+                            {isReviewing ? "Reviewing..." : "Review Code"}
+                          </button>
+                        </div>
 
-                  <div className="surface-panel p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-950">AI Code Review</h3>
-                        <p className="text-sm subtle-text">
-                          Current solution ka quick feedback aur bug-risk analysis.
-                        </p>
+                        <AIInsightCard
+                          content={aiReview}
+                          emptyText="Code likhne ke baad Review Code dabao aur AI se focused feedback lo."
+                          accent="sky"
+                        />
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={handleReviewCode}
-                        disabled={isReviewing}
-                        className="btn btn-outline rounded-2xl border-slate-300 bg-white"
-                      >
-                        {isReviewing ? "Reviewing..." : "Review Code"}
-                      </button>
-                    </div>
+                      <div className="surface-panel p-4">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <div>
+                            <h3 className="text-lg font-bold text-slate-950">AI Explain Problem</h3>
+                            <p className="text-sm subtle-text">
+                              Problem ko simple language me break down karwa lo.
+                            </p>
+                          </div>
 
-                    <AIInsightCard
-                      content={aiReview}
-                      emptyText="Code likhne ke baad Review Code dabao aur AI se focused feedback lo."
-                      accent="sky"
-                    />
-                  </div>
+                          <button
+                            type="button"
+                            onClick={handleExplainProblem}
+                            disabled={isExplaining}
+                            className="btn btn-outline rounded-2xl border-slate-300 bg-white"
+                          >
+                            {isExplaining ? "Explaining..." : "Explain Problem"}
+                          </button>
+                        </div>
 
-                  <div className="surface-panel p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-950">AI Explain Problem</h3>
-                        <p className="text-sm subtle-text">
-                          Problem ko simple language me break down karwa lo.
-                        </p>
+                        <AIInsightCard
+                          content={aiExplanation}
+                          emptyText="Problem heavy lag raha ho to Explain Problem use karo."
+                          accent="amber"
+                        />
                       </div>
-
-                      <button
-                        type="button"
-                        onClick={handleExplainProblem}
-                        disabled={isExplaining}
-                        className="btn btn-outline rounded-2xl border-slate-300 bg-white"
-                      >
-                        {isExplaining ? "Explaining..." : "Explain Problem"}
-                      </button>
                     </div>
-
-                    <AIInsightCard
-                      content={aiExplanation}
-                      emptyText="Problem heavy lag raha ho to Explain Problem use karo."
-                      accent="amber"
-                    />
                   </div>
 
                   <div className="min-h-0 flex-1">
