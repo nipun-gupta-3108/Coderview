@@ -3,19 +3,19 @@ import { getDifficultyBadgeClass } from "../lib/utils";
 function ProblemDescription({ problem, currentProblemId, onProblemChange, allProblems }) {
   return (
     <div className="scrollbar-smooth h-full overflow-y-auto">
-      <div className="surface-panel-strong sticky top-0 z-10 rounded-b-[28px] rounded-t-none border-x-0 border-t-0 px-6 py-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <h1 className="max-w-xl text-2xl font-bold text-slate-950">{problem.title}</h1>
-          <span className={`badge badge-lg shrink-0 font-semibold ${getDifficultyBadgeClass(problem.difficulty)}`}>
+      <div className="surface-panel-strong sticky top-0 z-10 rounded-b-[28px] rounded-t-none border-x-0 border-t-0 px-4 py-3">
+        <div className="mb-2 flex items-start justify-between gap-3">
+          <h1 className="max-w-xl text-lg font-bold text-slate-950">{problem.title}</h1>
+          <span className={`badge badge-sm shrink-0 font-semibold ${getDifficultyBadgeClass(problem.difficulty)}`}>
             {problem.difficulty}
           </span>
         </div>
-        <p className="mb-5 text-base subtle-text">{problem.category}</p>
+        <p className="mb-3 text-sm subtle-text">{problem.category}</p>
 
         <div>
-          <label className="mini-label mb-2 block">switch problem</label>
+          <label className="mini-label mb-1 block text-xs">switch problem</label>
           <select
-            className="select select-md w-full rounded-2xl border-slate-200 bg-white font-medium shadow-sm"
+            className="select select-sm w-full rounded-2xl border-slate-200 bg-white font-medium shadow-sm"
             value={currentProblemId}
             onChange={(e) => onProblemChange(e.target.value)}
           >
