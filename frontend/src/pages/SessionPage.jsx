@@ -302,7 +302,7 @@ function SessionPage() {
                               emptyText="Need a nudge? Click 'Get Hint' to receive guidance without breaking your session flow."
                               accent="emerald"
                             />
-                      </div>
+                          </div>
 
                           <div className="surface-panel p-4">
                             <div className="mb-3 flex items-center justify-between gap-3">
@@ -328,7 +328,7 @@ function SessionPage() {
                               emptyText="Need feedback on your code? Click 'Review Code' for focused AI insights."
                               accent="sky"
                             />
-                      </div>
+                          </div>
 
                           <div className="surface-panel p-4">
                             <div className="mb-3 flex items-center justify-between gap-3">
@@ -357,11 +357,11 @@ function SessionPage() {
                           </div>
                         </div>
                       </div>
-                      </div>
 
                       <div className="min-h-0 flex-1">
                         <OutputPanel output={output} />
                       </div>
+                    </div>
                   </Panel>
                 </PanelGroup>
               </Panel>

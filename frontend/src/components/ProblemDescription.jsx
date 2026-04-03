@@ -5,7 +5,7 @@ function ProblemDescription({ problem, currentProblemId, onProblemChange, allPro
     <div className="scrollbar-smooth h-full overflow-y-auto">
       <div className="surface-panel-strong sticky top-0 z-10 rounded-b-[28px] rounded-t-none border-x-0 border-t-0 px-6 py-6">
         <div className="mb-4 flex items-start justify-between gap-4">
-          <h1 className="max-w-xl text-4xl font-bold text-slate-950">{problem.title}</h1>
+          <h1 className="max-w-xl text-2xl font-bold text-slate-950">{problem.title}</h1>
           <span className={`badge badge-lg shrink-0 font-semibold ${getDifficultyBadgeClass(problem.difficulty)}`}>
             {problem.difficulty}
           </span>
@@ -75,7 +75,7 @@ function ProblemDescription({ problem, currentProblemId, onProblemChange, allPro
           <ul className="space-y-3">
             {problem.constraints.map((constraint, idx) => (
               <li key={idx} className="flex items-start gap-3">
-                <span className="mt-0.5 text-lg text-emerald-700">•</span>
+                <span className="mt-0.5 text-lg text-emerald-700">ï¿½</span>
                 <code className="rounded-xl bg-slate-100 px-3 py-1 text-sm text-slate-700">
                   {constraint}
                 </code>
