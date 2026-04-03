@@ -6,15 +6,24 @@ Coderview is a full-stack collaborative coding interview platform for practicing
 
 ## Features
 
-- Clerk authentication for sign up and sign in
-- Dashboard with active sessions and recent completed sessions
-- Create or join 1:1 interview rooms
-- Stream-powered video calling and in-session chat
-- Monaco editor with support for JavaScript, Python, Java, and C++
-- Curated problem library with starter code and expected outputs
-- Code execution through OneCompiler
-- MongoDB persistence for users and sessions
-- Inngest functions for syncing Clerk users into MongoDB and Stream
+### Core Features
+- **Clerk authentication** for secure sign up and sign in
+- **Interactive Dashboard** with active sessions and completed session history
+- **1:1 Collaborative Interview Rooms** - Create or join live coding sessions
+- **Stream-powered Real-time Communication** - Video calling and in-session chat
+- **Monaco Editor** with support for JavaScript, Python, Java, and C++
+- **Curated DSA Problem Library** with starter code, examples, and expected outputs
+- **Remote Code Execution** through OneCompiler API
+
+### AI-Powered Learning Features
+- **AI Hint System** - Get progressive hints (3 levels) without full solutions
+- **AI Code Review** - Receive focused feedback on correctness and bug risks
+- **AI Problem Explanation** - Break down complex problems into simple language
+
+### Data & Infrastructure
+- **MongoDB** persistence for users and sessions
+- **Inngest** integration for syncing Clerk users with MongoDB and Stream
+- **Responsive UI** - Optimized scrolling for AI panels and output console on all screen sizes
 
 ## Tech Stack
 
@@ -38,33 +47,61 @@ Coderview is a full-stack collaborative coding interview platform for practicing
 - Inngest
 - Stream Node SDK
 
+## Pages & Sections
+
+### Home Page
+- Hero section with feature highlights
+- Call-to-action to get started
+- Overview of platform capabilities
+
+### Dashboard
+- View all active sessions
+- See recently completed sessions
+- Create new interview session
+- Join existing sessions
+
+### Problem Page
+- Practice problems independently
+- AI-powered guidance without collaboration
+- Test your solution against expected outputs
+- Three AI features: Hints, Code Review, Problem Explanation
+
+### Session Page
+- Live collaborative coding environment
+- Real-time video call with partner
+- In-session chat for communication
+- Shared code editor
+- AI assistance during session
+- Output console with test results
+
 ## Project Structure
 
 ```text
 Coderview/
 |-- backend/
 |   |-- src/
-|   |   |-- controllers/
-|   |   |-- lib/
-|   |   |-- middleware/
-|   |   |-- models/
-|   |   `-- routes/
+|   |   |-- controllers/           # Business logic for AI, chat, execution, sessions
+|   |   |-- lib/                   # Database, environment, Inngest, OpenAI, Stream
+|   |   |-- middleware/            # Route protection
+|   |   |-- models/                # MongoDB schemas (User, Session)
+|   |   `-- routes/                # API endpoints
 |   `-- package.json
 |-- frontend/
-|   |-- public/
+|   |-- public/                    # Static assets
 |   |-- src/
-|   |   |-- api/
-|   |   |-- components/
-|   |   |-- data/
-|   |   |-- hooks/
-|   |   |-- lib/
-|   |   `-- pages/
+|   |   |-- api/                   # API client (sessions)
+|   |   |-- components/            # Reusable UI components
+|   |   |-- data/                  # Problem library
+|   |   |-- hooks/                 # Custom React hooks
+|   |   |-- lib/                   # AI, Axios, OneCompiler, Stream, utilities
+|   |   `-- pages/                 # Application pages
 |   `-- package.json
 `-- package.json
 ```
 
 ## How It Works
 
+### Creating & Joining Sessions
 1. Users authenticate with Clerk.
 2. Clerk user lifecycle events are handled by Inngest to create or delete matching MongoDB and Stream users.
 3. A signed-in user can create a session by choosing a problem and difficulty.
@@ -74,7 +111,19 @@ Coderview/
    - a Stream chat channel
 5. Another user can join the active session and collaborate in real time.
 6. Code is executed through the backend using the OneCompiler API.
-7. When the host ends the room, the Stream call/channel are deleted and the session is marked as completed.
+7. When the host ends the session, the Stream call/channel are deleted and the session is marked as completed.
+
+### Problem-Solving Workflow
+1. **Understand the Problem** - Read the problem description with examples and constraints
+   - Use "AI Explain Problem" to break down complex problems into simpler language
+2. **Write Code** - Use the Monaco editor to write and test your solution
+   - Switch between JavaScript, Python, Java, or C++
+   - Execute code immediately to see output
+3. **Get Guidance** - Use AI-powered features without compromising learning
+   - **AI Hint** - Get 3 levels of progressive hints to guide your thinking
+   - **AI Code Review** - Receive focused feedback on correctness and bug analysis
+4. **Collaborate** - In live sessions, discuss with your partner via video/chat while coding together
+5. **Verify Solution** - Run code against test cases and see if your solution passes
 
 ## Environment Variables
 
