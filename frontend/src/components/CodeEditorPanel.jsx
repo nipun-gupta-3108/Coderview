@@ -1,5 +1,5 @@
 import Editor from "@monaco-editor/react";
-import { Loader2Icon, PlayIcon } from "lucide-react";
+import { Loader2Icon, PlayIcon, CheckCircle2Icon } from "lucide-react";
 import { LANGUAGE_CONFIG } from "../data/problems";
 
 function CodeEditorPanel({
@@ -9,6 +9,7 @@ function CodeEditorPanel({
   onLanguageChange,
   onCodeChange,
   onRunCode,
+  isSyncing = false,
 }) {
   return (
     <div className="editor-shell flex flex-col">
@@ -30,6 +31,21 @@ function CodeEditorPanel({
               </option>
             ))}
           </select>
+
+          {/* Code sync indicator */}
+          <div className="ml-2 flex items-center gap-1 text-xs text-emerald-400">
+            {isSyncing ? (
+              <>
+                <Loader2Icon className="h-3 w-3 animate-spin" />
+                <span>Syncing...</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2Icon className="h-3 w-3" />
+                <span>Synced</span>
+              </>
+            )}
+          </div>
         </div>
 
         <button

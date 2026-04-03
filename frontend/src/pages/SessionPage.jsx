@@ -17,6 +17,7 @@ import { executeCode } from "../lib/OneCompiler";
 import { explainAiProblem, getAiHint, reviewAiCode } from "../lib/ai";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import useStreamClient from "../hooks/useStreamClient";
+import useCodeSync from "../hooks/useCodeSync";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
 
 function SessionPage() {
@@ -55,6 +56,10 @@ function SessionPage() {
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(problemData?.starterCode?.[selectedLanguage] || "");
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Initialize code synchronization for real-time collaborative editing
+  useCodeSync(channel, code, setCode, id, user?.id, setIsSyncing);
 
   useEffect(() => {
     if (!session || !user || loadingSession) return;
@@ -257,6 +262,7 @@ function SessionPage() {
                       selectedLanguage={selectedLanguage}
                       code={code}
                       isRunning={isRunning}
+                      isSyncing={isSyncing}
                       onLanguageChange={handleLanguageChange}
                       onCodeChange={(value) => setCode(value)}
                       onRunCode={handleRunCode}
