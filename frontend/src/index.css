@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
+@import "./design-system/tokens/index.css";
 @plugin "daisyui" {
   themes: light --default;
 }

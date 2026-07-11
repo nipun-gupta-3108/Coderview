@@ -76,6 +76,13 @@ Coderview is a full-stack collaborative coding interview platform for practicing
 
 ## Project Structure
 
+> **Note:** Coderview's frontend is mid-rewrite. See `docs/README.md` and
+> `docs/DEVELOPMENT_ROADMAP.md` for the full plan. `design-system/` and
+> `features/` below were introduced in **Sprint 0** as an empty skeleton;
+> `components/` and `pages/` remain the live, working implementation until
+> each sprint migrates a slice of them over. Nothing in this section reflects
+> a behavioral change — it documents structure only.
+
 ```text
 Coderview/
 |-- backend/
@@ -86,12 +93,29 @@ Coderview/
 |   |   |-- models/                # MongoDB schemas (User, Session)
 |   |   `-- routes/                # API endpoints
 |   `-- package.json
+|-- docs/                          # Frontend rewrite documentation (audit, architecture,
+|   |                               # design system, wireframes, roadmap, review notes)
 |-- frontend/
 |   |-- public/                    # Static assets
 |   |-- src/
 |   |   |-- api/                   # API client (sessions)
-|   |   |-- components/            # Reusable UI components
+|   |   |-- components/            # Current flat components; migrated into features/
+|   |   |                          #   incrementally per docs/DEVELOPMENT_ROADMAP.md
 |   |   |-- data/                  # Problem library
+|   |   |-- design-system/         # Shared UI primitives, layout, feedback, tokens
+|   |   |   |                      #   (Sprint 0+, see docs/DESIGN_SYSTEM.md)
+|   |   |   |-- primitives/         # Panel, Badge, Button, Select, Modal, etc. (Sprint 1-2)
+|   |   |   |-- layout/             # ResizableSplit, PageShell (Sprint 2)
+|   |   |   |-- feedback/           # EmptyState, ErrorState, Spinner, SkeletonCard (Sprint 1)
+|   |   |   |-- tokens/             # CSS custom-property token layer (Sprint 0)
+|   |   |   `-- icons/              # Reserved; not yet populated
+|   |   |-- features/              # Feature-sliced domain code
+|   |   |   |                      #   (Sprint 3+, see docs/PROJECT_ARCHITECTURE.md)
+|   |   |   |-- auth/               # Reserved; not yet populated
+|   |   |   |-- dashboard/          # Sprint 3
+|   |   |   |-- problems/           # Sprint 4
+|   |   |   |-- workspace/          # Sprint 5-7 (shared editor/AI/problem/output core)
+|   |   |   `-- session/            # Sprint 8 (live collaboration layer)
 |   |   |-- hooks/                 # Custom React hooks
 |   |   |-- lib/                   # AI, Axios, OneCompiler, Stream, utilities
 |   |   `-- pages/                 # Application pages

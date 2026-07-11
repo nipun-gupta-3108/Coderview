@@ -1,0 +1,76 @@
+/**
+ * Design System — Token Layer
+ *
+ * Source of truth: docs/DESIGN_SYSTEM.md, "Summary: Token Layer Recap".
+ * This file is the verbatim token block from that document. Do not hand-edit
+ * a value here without first updating DESIGN_SYSTEM.md — the doc is
+ * authoritative, this file is its CSS implementation.
+ *
+ * Sprint 0 scope: this file is additive only. Nothing in the app consumes
+ * these tokens yet (existing components still use the legacy --app-* tokens
+ * defined in ../../index.css). Primitives built in Sprint 1+ are what will
+ * actually reference these variables. No visual output changes as a result
+ * of adding this file.
+ */
+
+:root {
+  /* Color */
+  --color-bg: #fdfbf5;
+  --color-surface: rgba(255,255,255,0.78);
+  --color-surface-strong: rgba(255,255,255,0.92);
+  --color-border: rgba(16,24,40,0.08);
+  --color-ink: #101828;
+  --color-muted: #5f6c7b;
+  --color-accent-emerald: #0f766e;
+  --color-accent-amber: #b45309;
+  --color-accent-rose: #be123c;
+  --color-accent-sky: #0369a1;
+  --gradient-brand: linear-gradient(135deg, #14532d 0%, #0f766e 55%, #0284c7 100%);
+
+  /* Type */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  /* Spacing (8px base) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+
+  /* Radius */
+  --radius-sm: 12px; --radius-md: 18px; --radius-lg: 22px;
+  --radius-xl: 28px; --radius-full: 9999px;
+
+  /* Shadow */
+  --shadow-xs: 0 4px 12px rgba(16,24,40,0.06);
+  --shadow-sm: 0 20px 60px rgba(16,24,40,0.08);
+  --shadow-md: 0 24px 70px rgba(16,24,40,0.12);
+  --shadow-lg: 0 30px 80px rgba(16,24,40,0.18);
+  --shadow-glow-brand: 0 16px 34px rgba(15,118,110,0.28);
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+[data-theme="dark"] {
+  --color-bg: #0b0f14;
+  --color-surface: rgba(24,30,38,0.72);
+  --color-surface-strong: rgba(24,30,38,0.9);
+  --color-border: rgba(255,255,255,0.08);
+  --color-ink: #e7ecf3;
+  --color-muted: #9aa7b5;
+  --color-accent-emerald: #2dd4bf;
+  --color-accent-amber: #fbbf24;
+  --color-accent-rose: #fb7185;
+  --color-accent-sky: #38bdf8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}
