@@ -20,19 +20,28 @@ const DOT_TONE_CLASSES = {
   neutral: "bg-slate-400",
 };
 
-function StatusChip({ tone = "neutral", showDot = false, dotLabel, className = "", children, ...rest }) {
+function StatusChip({
+  tone = "neutral",
+  showDot = false,
+  dotLabel,
+  className = "",
+  children,
+  ...rest
+}) {
   const toneClass = TONE_CLASSES[tone] || TONE_CLASSES.neutral;
   const dotClass = DOT_TONE_CLASSES[tone] || DOT_TONE_CLASSES.neutral;
 
   return (
     <span className={`status-chip ${toneClass} ${className}`.trim()} {...rest}>
       {showDot && (
-        <span
-          className={`h-2 w-2 rounded-full ${dotClass}`}
-          aria-hidden={dotLabel ? undefined : "true"}
-        />
+        <>
+          <span
+            className={`h-2 w-2 rounded-full ${dotClass}`}
+            aria-hidden="true"
+          />
+          {dotLabel && <span className="sr-only">{dotLabel}</span>}
+        </>
       )}
-      {dotLabel && <span className="sr-only">{dotLabel}</span>}
       {children}
     </span>
   );
